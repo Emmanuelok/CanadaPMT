@@ -66,10 +66,16 @@ Modelled on the best of Zillow / Akwaaba / Airbnb, adapted for Canada:
 
 ### Photography
 
-Listing imagery uses real photos from Unsplash layered over a deterministic SVG
-scene, with an `onError` fallback so **a card can never show a broken image**.
-To use your own source (Unsplash API, Cloudinary, an MLS feed), edit the
-`POOLS` / `photoUrl` in `src/components/Photo.tsx` — no call sites change.
+Listing imagery resolves through the **`/api/photo`** route over a premium dark
+placeholder, with an `onError` fallback so **a card can never show a broken
+image**:
+
+- **`UNSPLASH_ACCESS_KEY` set** → live, query-matched photography from the
+  Unsplash API (pools cached in-memory to respect rate limits).
+- **unset** → a curated set of real Unsplash photos, assigned deterministically.
+
+Swap in your own source (Cloudinary, an MLS feed) in `src/app/api/photo/route.ts`
+or `src/lib/images/scenes.ts` — no call sites change.
 
 ## 🛠 Tech stack
 
@@ -106,6 +112,7 @@ Aria and the AI features work **with or without** an API key:
 |----------|---------|---------|
 | `ANTHROPIC_API_KEY` | _(unset)_ | When set, Aria runs on Claude. When unset, Aria uses a built-in heuristic engine over the listing data. |
 | `ARIA_MODEL` | `claude-opus-4-8` | Override the model (e.g. `claude-sonnet-4-6` or `claude-haiku-4-5` for higher-volume/lower-cost chat). |
+| `UNSPLASH_ACCESS_KEY` | _(unset)_ | When set, `/api/photo` serves live, query-matched Unsplash photography. When unset, a curated set of real Unsplash photos is used. |
 
 The listing catalog is sent to Claude as a cached system prompt, and refusals / network errors fall back to the heuristic engine automatically.
 
