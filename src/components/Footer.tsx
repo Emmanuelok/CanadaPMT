@@ -21,6 +21,15 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
     ],
   },
   {
+    title: "Earn",
+    links: [
+      { label: "Host your place", href: "/host" },
+      { label: "Earnings estimator", href: "/host#estimate" },
+      { label: "How it works", href: "/host#how" },
+      { label: "Pricing & plans", href: "/pricing" },
+    ],
+  },
+  {
     title: "Company",
     links: [
       { label: "Why MapleHaus", href: "/about" },
@@ -33,7 +42,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
 export function Footer() {
   return (
     <footer className="mt-20 border-t border-ink-100 bg-ink-50/60">
-      <div className="mh-container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-5">
+      <div className="mh-container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-6">
         <div className="lg:col-span-2">
           <Link href="/" className="flex items-center gap-2.5">
             <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-fuchsia-500 text-white">

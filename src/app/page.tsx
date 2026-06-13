@@ -315,6 +315,50 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Host with us ─────────────────────────────────────────────────── */}
+      <section className="py-16">
+        <div className="mh-container">
+          <Reveal>
+            <div className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-brand-600/15 via-night-900 to-violet-700/15 p-8 sm:p-12">
+              <div className="grid items-center gap-8 lg:grid-cols-[1.3fr_1fr]">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">
+                    <Sparkles className="h-3.5 w-3.5 text-brand-400" /> MapleHaus Host
+                  </span>
+                  <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    Own a home? Put it to work.
+                  </h2>
+                  <p className="mt-3 max-w-xl text-zinc-400">
+                    Got a spare suite or a place that sits empty? We turn it into a short-term rental and run it
+                    end-to-end — listing, pricing, guests, cleaning and maintenance. You just collect the payouts.
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href="/host#estimate" className="mh-btn-primary">
+                      <TrendingUp className="h-4 w-4" /> Estimate your earnings
+                    </Link>
+                    <Link href="/host" className="mh-btn-ghost">
+                      How it works <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+                <ul className="grid gap-3">
+                  {[
+                    "Listing, photos & dynamic pricing",
+                    "24/7 guests, cleaning & maintenance",
+                    "Transparent monthly payouts",
+                    "Keep up to 88% of revenue",
+                  ].map((f) => (
+                    <li key={f} className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-zinc-200">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-400" /> {f}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── For agents / CTA ─────────────────────────────────────────────── */}
       <section className="py-16">
         <div className="mh-container">

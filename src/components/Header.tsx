@@ -12,6 +12,7 @@ const PRIMARY = [
   { label: "Rent", href: "/search?type=rent" },
   { label: "Land", href: "/search?type=sale&cat=land" },
   { label: "Commercial", href: "/search?type=sale&cat=commercial" },
+  { label: "Host your place", href: "/host" },
   { label: "Agents", href: "/agents" },
 ];
 
