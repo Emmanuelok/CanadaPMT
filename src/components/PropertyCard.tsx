@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import type { Property } from "@/types";
 import type { Badge, BadgeTone } from "@/lib/signals";
-import { PropertyScene } from "@/components/PropertyScene";
+import { CardMedia } from "@/components/CardMedia";
 import { SaveButton } from "@/components/SaveButton";
 import { propertySignals } from "@/lib/signals";
 import { agentById } from "@/lib/data/agents";
@@ -77,11 +77,6 @@ function SolidBadge({ badge }: { badge: Badge }) {
   );
 }
 
-function imageKind(p: Property) {
-  if (p.propertyType === "Condo Apartment" || p.propertyType === "Loft") return "living" as const;
-  return "exterior" as const;
-}
-
 export function PropertyCard({ property, className }: { property: Property; className?: string }) {
   const s = propertySignals(property);
   const agent = agentById(property.agentId);
@@ -110,11 +105,11 @@ export function PropertyCard({ property, className }: { property: Property; clas
       )}
     >
       <div className="relative">
-        <PropertyScene seedKey={`${property.id}-0`} kind={imageKind(property)} className="h-44 w-full" />
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-black/35 to-transparent" />
+        <CardMedia property={property} className="h-44 w-full" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 h-20 bg-gradient-to-b from-black/35 to-transparent" />
 
         {/* stacked badges */}
-        <div className="absolute left-2.5 top-2.5 flex max-w-[70%] flex-col items-start gap-1">
+        <div className="pointer-events-none absolute left-2.5 top-2.5 z-30 flex max-w-[70%] flex-col items-start gap-1">
           <span className="rounded-md bg-white/95 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-ink-800 shadow-sm">
             {LISTING_LABEL[property.listingType]}
           </span>
@@ -129,7 +124,7 @@ export function PropertyCard({ property, className }: { property: Property; clas
         </div>
 
         {/* top-right */}
-        <div className="absolute right-2.5 top-2.5 flex items-center gap-1.5">
+        <div className="absolute right-2.5 top-2.5 z-30 flex items-center gap-1.5">
           <SaveButton />
           <span
             className={cn(

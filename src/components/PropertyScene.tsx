@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 // imagery, never breaks, and needs no external CDN. A real photo CDN can be
 // swapped in behind this same component later.
 
-type Kind = "exterior" | "living" | "kitchen" | "bedroom";
+export type Kind = "exterior" | "living" | "kitchen" | "bedroom";
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -15,7 +15,7 @@ function hash(s: string): number {
   return Math.abs(h);
 }
 
-function sceneFor(label: string | undefined, index: number): Kind {
+export function sceneFor(label: string | undefined, index: number): Kind {
   const l = (label ?? "").toLowerCase();
   if (/kitchen/.test(l)) return "kitchen";
   if (/bedroom|suite|sleeping/.test(l)) return "bedroom";

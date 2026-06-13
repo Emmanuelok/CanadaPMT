@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --maple-grid: rgba(6, 118, 92, 0.06);
+    --maple-grid: rgba(126, 34, 57, 0.05);
   }
 
   html {
@@ -106,8 +106,8 @@
   transition: transform 0.12s ease;
 }
 .mh-pin:hover {
-  border-color: #06765c;
-  color: #06765c;
+  border-color: #7e2239;
+  color: #7e2239;
   z-index: 1000;
 }
 .mh-pin--deal {
@@ -115,8 +115,8 @@
   color: #047857;
 }
 .mh-pin--active {
-  background: #06765c;
-  border-color: #06765c;
+  background: #7e2239;
+  border-color: #7e2239;
   color: #ffffff;
   transform: scale(1.12);
   z-index: 1001;

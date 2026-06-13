@@ -8,7 +8,7 @@ import L from "leaflet";
 import type { Property } from "@/types";
 import { formatCAD, formatCADCompact } from "@/lib/format";
 import { propertySignals } from "@/lib/signals";
-import { PropertyScene } from "@/components/PropertyScene";
+import { Photo } from "@/components/Photo";
 
 function priceLabel(p: Property): string {
   return p.listingType === "rent" ? `$${(p.price / 1000).toFixed(1)}k` : formatCADCompact(p.price);
@@ -71,7 +71,7 @@ export function LeafletMap({
           >
             <Popup>
               <Link href={`/property/${p.slug}`} className="block no-underline">
-                <PropertyScene seedKey={`${p.id}-0`} label={p.images[0]?.label} className="h-24 w-full" />
+                <Photo seedKey={`${p.id}-0`} label={p.images[0]?.label} className="h-24 w-full" />
                 <div className="p-2.5">
                   <p className="font-display text-sm font-extrabold text-ink-900">
                     {p.listingType === "rent" ? `${formatCAD(p.price)}/mo` : formatCAD(p.price)}

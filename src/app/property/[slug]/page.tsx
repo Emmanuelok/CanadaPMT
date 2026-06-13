@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { properties, propertyBySlug } from "@/lib/data/properties";
 import type { Property } from "@/types";
-import { PropertyScene } from "@/components/PropertyScene";
+import { Photo } from "@/components/Photo";
 import { PropertyCard } from "@/components/PropertyCard";
 import { ValuationPanel } from "@/components/ValuationPanel";
 import { TrustPanel } from "@/components/TrustPanel";
@@ -83,7 +83,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
 
       {/* Gallery */}
       <div className="mt-4 overflow-hidden rounded-2xl">
-        <PropertyScene
+        <Photo
           seedKey={`${property.id}-0`}
           kind={heroKind}
           label={property.images[0]?.label}
@@ -93,7 +93,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       {thumbs.length > 0 && (
         <div className="mt-2 grid grid-cols-4 gap-2">
           {thumbs.map((img, i) => (
-            <PropertyScene
+            <Photo
               key={i}
               seedKey={`${property.id}-${i + 1}`}
               label={img.label}

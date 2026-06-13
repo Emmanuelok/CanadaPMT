@@ -9,19 +9,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Brand: deep evergreen/teal — trust, growth, Canadian wilderness
+        // Brand: deep wine / maroon — the Akwaaba-style warm, premium accent
         brand: {
-          50: "#ecfdf6",
-          100: "#d1faec",
-          200: "#a6f3da",
-          300: "#6ee7c2",
-          400: "#34d3a5",
-          500: "#10b888",
-          600: "#059470",
-          700: "#06765c",
-          800: "#085d4a",
-          900: "#0a4d3f",
-          950: "#022c24",
+          50: "#fcf4f5",
+          100: "#f8e6e9",
+          200: "#f0ccd3",
+          300: "#e2a3b0",
+          400: "#cf6f82",
+          500: "#b94a60",
+          600: "#9d3349",
+          700: "#7e2239",
+          800: "#681c30",
+          900: "#571a2a",
+          950: "#310d17",
         },
         // Accent: maple — energy, warmth, the unmistakable Canadian mark
         maple: {
