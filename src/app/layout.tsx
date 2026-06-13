@@ -4,6 +4,8 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AriaCopilot } from "@/components/AriaCopilot";
+import { CompareProvider } from "@/components/compare/CompareContext";
+import { CompareBar } from "@/components/compare/CompareBar";
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
@@ -46,10 +48,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             __html: `(function(){try{var t=localStorage.getItem('mh-theme');if(t==='dark'||(!t&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark');}}catch(e){}})();`,
           }}
         />
-        <Header />
-        <main>{children}</main>
-        <Footer />
-        <AriaCopilot />
+        <CompareProvider>
+          <Header />
+          <main>{children}</main>
+          <Footer />
+          <AriaCopilot />
+          <CompareBar />
+        </CompareProvider>
       </body>
     </html>
   );

@@ -13,6 +13,7 @@ import {
   Sparkles,
   Bookmark,
   BookmarkCheck,
+  Flame,
 } from "lucide-react";
 import type { ListingType, Property } from "@/types";
 import { applyFilters, defaultFilters, PROPERTY_TYPES, type PropertyFilters } from "@/lib/search";
@@ -57,15 +58,21 @@ export function SearchExperience() {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<View>("split");
   const [savedSearch, setSavedSearch] = useState(false);
+  const [heatmap, setHeatmap] = useState(false);
+  const [areaBounds, setAreaBounds] = useState<[number, number, number, number] | null>(null);
 
   const results = useMemo(() => {
     let r = applyFilters(filters);
     if (chips.length) r = r.filter((p) => chips.every((c) => matchesLifestyle(p, c)));
+    if (areaBounds) {
+      const [s, w, n, e] = areaBounds;
+      r = r.filter((p) => p.coords.lat >= s && p.coords.lat <= n && p.coords.lng >= w && p.coords.lng <= e);
+    }
     if (filters.sort === "relevant") {
       r = [...r].sort((a, b) => propertySignals(b).matchScore - propertySignals(a).matchScore);
     }
     return r;
-  }, [filters, chips]);
+  }, [filters, chips, areaBounds]);
 
   function update(patch: Partial<PropertyFilters>) {
     const next = { ...filters, ...patch };
@@ -222,6 +229,25 @@ export function SearchExperience() {
             <span className="ml-2 text-sm font-medium text-ink-400">· ranked for you</span>
           </h1>
           <div className="flex items-center gap-2">
+            {areaBounds && (
+              <button
+                onClick={() => setAreaBounds(null)}
+                className="inline-flex items-center gap-1 rounded-full border border-maple-200 bg-maple-50 px-3 py-1.5 text-xs font-semibold text-maple-600"
+              >
+                <X className="h-3.5 w-3.5" /> Clear area
+              </button>
+            )}
+            {view !== "grid" && (
+              <button
+                onClick={() => setHeatmap((v) => !v)}
+                className={cn(
+                  "hidden items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:inline-flex",
+                  heatmap ? "border-brand-300 bg-brand-50 text-brand-700" : "border-ink-200 bg-white text-ink-700 hover:border-brand-300",
+                )}
+              >
+                <Flame className="h-4 w-4" /> Heatmap
+              </button>
+            )}
             <button
               onClick={() => setSavedSearch((v) => !v)}
               className="hidden items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink-700 transition hover:border-brand-300 sm:inline-flex"
@@ -267,13 +293,13 @@ export function SearchExperience() {
           </div>
         ) : view === "map" ? (
           <div className="mt-5 h-[calc(100vh-15rem)] overflow-hidden rounded-2xl border border-ink-100">
-            <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} />
+            <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
           </div>
         ) : (
           // split
           <div className="mt-5 grid gap-5 lg:grid-cols-[1.25fr_1fr]">
             <div className="order-2 hidden overflow-hidden rounded-2xl border border-ink-100 lg:order-1 lg:block lg:sticky lg:top-44 lg:h-[calc(100vh-12rem)]">
-              <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} />
+              <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
             </div>
             <div className="order-1 min-w-0 lg:order-2">
               <div className="grid gap-5 sm:grid-cols-2">

@@ -18,6 +18,7 @@ import type { Property } from "@/types";
 import type { Badge, BadgeTone } from "@/lib/signals";
 import { CardMedia } from "@/components/CardMedia";
 import { SaveButton } from "@/components/SaveButton";
+import { CompareToggle } from "@/components/compare/CompareToggle";
 import { propertySignals } from "@/lib/signals";
 import { agentById } from "@/lib/data/agents";
 import { neighbourhoodById } from "@/lib/data/neighbourhoods";
@@ -125,6 +126,7 @@ export function PropertyCard({ property, className }: { property: Property; clas
 
         {/* top-right */}
         <div className="absolute right-2.5 top-2.5 z-30 flex items-center gap-1.5">
+          <CompareToggle id={property.id} />
           <SaveButton />
           <span
             className={cn(
