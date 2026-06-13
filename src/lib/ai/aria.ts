@@ -124,6 +124,7 @@ function heuristicAnswer(messages: ChatMessage[]): string {
       "- **AffordIQ** — what you can actually afford after the stress test → [/affordability](/affordability)",
       "- **ScamShield** — spot rental scams before you pay a deposit",
       "- **Earn by hosting** — turn a home, suite or spare room into managed short-term-rental income → [/host](/host)",
+      "- **Autopilot** — name a goal and a fleet of AI agents does the rest → [/autopilot](/autopilot)",
       "What are you looking for?",
     ].join("\n");
   }
@@ -198,6 +199,7 @@ function heuristicAnswer(messages: ChatMessage[]): string {
       "**MapleHaus Host** runs the whole thing end-to-end: listing, dynamic pricing, guest screening, cleaning, restocking and maintenance. You just collect payouts.",
       "- Estimate your exact space → [/host#estimate](/host#estimate)",
       "- See a live owner dashboard → [/host/dashboard](/host/dashboard)",
+      `- Let Autopilot run pricing, guests & compliance → [Run on Autopilot](/autopilot?goal=${encodeURIComponent(`rent out my ${what} in ${hostCity}`)})`,
     ].join("\n");
   }
 
@@ -250,5 +252,11 @@ function heuristicAnswer(messages: ChatMessage[]): string {
   const opener = broadened
     ? `I didn't find an exact match, but here ${final.length === 1 ? "is a close option" : "are some close options"}${where}:`
     : `Here ${final.length === 1 ? "is" : "are"} ${final.length} option${final.length > 1 ? "s" : ""}${where} that ${final.length === 1 ? "fits" : "fit"}:`;
-  return [opener, ...final.map(listingLine), "", "Open any listing to see its TrueValue estimate, price history and ScamShield trust score."].join("\n");
+  return [
+    opener,
+    ...final.map(listingLine),
+    "",
+    "Open any listing to see its TrueValue estimate, price history and ScamShield trust score.",
+    `Want this automated? [Run Deal Hunter on Autopilot](/autopilot?goal=${encodeURIComponent(last?.content ?? "find homes")})`,
+  ].join("\n");
 }
