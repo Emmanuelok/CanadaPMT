@@ -6,6 +6,7 @@ import { Footer } from "@/components/Footer";
 import { AriaCopilot } from "@/components/AriaCopilot";
 import { CompareProvider } from "@/components/compare/CompareContext";
 import { CompareBar } from "@/components/compare/CompareBar";
+import { SavedProvider } from "@/components/saved/SavedContext";
 import { AuroraBackground } from "@/components/motion/AuroraBackground";
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
@@ -45,13 +46,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={`${sora.variable} ${manrope.variable}`}>
       <body className="min-h-screen">
         <AuroraBackground />
-        <CompareProvider>
-          <Header />
-          <main>{children}</main>
-          <Footer />
-          <AriaCopilot />
-          <CompareBar />
-        </CompareProvider>
+        <SavedProvider>
+          <CompareProvider>
+            <Header />
+            <main>{children}</main>
+            <Footer />
+            <AriaCopilot />
+            <CompareBar />
+          </CompareProvider>
+        </SavedProvider>
       </body>
     </html>
   );

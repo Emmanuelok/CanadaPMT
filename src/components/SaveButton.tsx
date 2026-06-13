@@ -1,19 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { Heart } from "lucide-react";
+import { useSaved } from "@/components/saved/SavedContext";
 import { cn } from "@/lib/cn";
 
-export function SaveButton({ className }: { className?: string }) {
-  const [saved, setSaved] = useState(false);
+export function SaveButton({ propertyId, className }: { propertyId: string; className?: string }) {
+  const { has, toggle } = useSaved();
+  const saved = has(propertyId);
   return (
     <button
       type="button"
       aria-label={saved ? "Remove from saved" : "Save home"}
+      aria-pressed={saved}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        setSaved((s) => !s);
+        toggle(propertyId);
       }}
       className={cn(
         "flex h-8 w-8 items-center justify-center rounded-full bg-white/90 text-ink-600 shadow-sm backdrop-blur transition hover:bg-white",

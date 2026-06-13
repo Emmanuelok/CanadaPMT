@@ -16,6 +16,7 @@ import {
 import { properties, curatedProperties, propertyBySlug } from "@/lib/data/properties";
 import type { Property } from "@/types";
 import { Photo } from "@/components/Photo";
+import { SaveButton } from "@/components/SaveButton";
 import { PropertyCard } from "@/components/PropertyCard";
 import { ValuationPanel } from "@/components/ValuationPanel";
 import { TrustPanel } from "@/components/TrustPanel";
@@ -106,13 +107,14 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       </Link>
 
       {/* Gallery */}
-      <div className="mt-4 overflow-hidden rounded-2xl">
+      <div className="relative mt-4 overflow-hidden rounded-2xl">
         <Photo
           seedKey={`${property.id}-0`}
           kind={heroKind}
           label={property.images[0]?.label}
           className="h-72 w-full sm:h-[420px]"
         />
+        <SaveButton propertyId={property.id} className="absolute right-3 top-3 z-10 h-10 w-10" />
       </div>
       {thumbs.length > 0 && (
         <div className="mt-2 grid grid-cols-4 gap-2">

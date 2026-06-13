@@ -132,7 +132,7 @@ export function PropertyCard({ property, className }: { property: Property; clas
         {/* top-right */}
         <div className="absolute right-2.5 top-2.5 z-30 flex items-center gap-1.5">
           <CompareToggle id={property.id} />
-          <SaveButton />
+          <SaveButton propertyId={property.id} />
           <span
             className={cn(
               "flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold text-white shadow-sm",

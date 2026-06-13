@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
-import { Menu, X, Sparkles, Search, ChevronDown } from "lucide-react";
+import { Menu, X, Sparkles, Search, ChevronDown, Heart } from "lucide-react";
+import { useSaved } from "@/components/saved/SavedContext";
 import { cn } from "@/lib/cn";
 
 const PRIMARY = [
@@ -31,6 +32,7 @@ export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [toolsOpen, setToolsOpen] = useState(false);
+  const { count, hydrated } = useSaved();
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-night-950/70 backdrop-blur-xl">
@@ -92,6 +94,18 @@ export function Header() {
             <Search className="h-4 w-4" /> Search
             <kbd className="rounded border border-white/10 bg-white/5 px-1 text-[10px] font-semibold text-zinc-500">⌘K</kbd>
           </button>
+          <Link
+            href="/saved"
+            aria-label={count > 0 ? `Saved homes (${count})` : "Saved homes"}
+            className="relative flex h-9 w-9 items-center justify-center rounded-full text-zinc-300 transition hover:bg-white/5 hover:text-white"
+          >
+            <Heart className={cn("h-5 w-5", hydrated && count > 0 && "fill-maple-500 text-maple-500")} />
+            {hydrated && count > 0 && (
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-maple-500 px-1 text-[10px] font-bold text-white">
+                {count}
+              </span>
+            )}
+          </Link>
           <Link href="/pricing" className="mh-btn-ghost px-4 py-2">
             Sign in
           </Link>
@@ -123,6 +137,14 @@ export function Header() {
                 {item.label}
               </Link>
             ))}
+            <Link
+              href="/saved"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-300 hover:bg-white/5 hover:text-white"
+            >
+              <Heart className={cn("h-4 w-4", hydrated && count > 0 && "fill-maple-500 text-maple-500")} />
+              Saved homes{hydrated && count > 0 ? ` (${count})` : ""}
+            </Link>
             <div className="mt-2 flex gap-2">
               <Link href="/pricing" onClick={() => setOpen(false)} className="mh-btn-ghost flex-1">
                 Sign in
