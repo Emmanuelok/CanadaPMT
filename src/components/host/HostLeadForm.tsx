@@ -1,8 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { CheckCircle2, Send } from "lucide-react";
-import { HOST_CITIES, SPACE_TYPES, type SpaceType } from "@/lib/str";
+import { CheckCircle2, Send, TrendingUp } from "lucide-react";
+import { estimateStr, HOST_CITIES, SPACE_TYPES, type SpaceType } from "@/lib/str";
+import { useHostFunnel } from "@/components/host/HostFunnel";
+import { formatCAD } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
 const SPACE_KEYS = Object.keys(SPACE_TYPES) as SpaceType[];
@@ -11,19 +13,24 @@ interface Lead {
   name: string;
   email: string;
   phone: string;
+  message: string;
   city: string;
   spaceType: SpaceType;
-  message: string;
+  estimate: number;
   at: number;
 }
 
-const EMPTY = { name: "", email: "", phone: "", city: "Toronto", spaceType: "entire" as SpaceType, message: "" };
+const EMPTY = { name: "", email: "", phone: "", message: "" };
 const emailOk = (e: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 
 export function HostLeadForm() {
+  const { sel, update } = useHostFunnel();
   const [form, setForm] = useState(EMPTY);
   const [error, setError] = useState("");
   const [submitted, setSubmitted] = useState(false);
+
+  const beds = Math.min(sel.bedrooms, SPACE_TYPES[sel.spaceType].maxBeds);
+  const est = estimateStr(sel.city, sel.spaceType, beds, sel.plan);
 
   function set<K extends keyof typeof EMPTY>(key: K, value: (typeof EMPTY)[K]) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -35,7 +42,7 @@ export function HostLeadForm() {
     if (!emailOk(form.email)) return setError("Please enter a valid email address.");
     setError("");
     try {
-      const lead: Lead = { ...form, at: Date.now() };
+      const lead: Lead = { ...form, city: sel.city, spaceType: sel.spaceType, estimate: est.ownerNetMonthly, at: Date.now() };
       const prev = JSON.parse(localStorage.getItem("mh-host-leads") || "[]");
       localStorage.setItem("mh-host-leads", JSON.stringify([lead, ...prev]));
     } catch {
@@ -52,7 +59,7 @@ export function HostLeadForm() {
         </span>
         <p className="mt-4 font-display text-xl font-bold text-white">Thanks, {form.name.split(" ")[0]}!</p>
         <p className="mt-2 max-w-md text-sm text-zinc-300">
-          We&apos;ll prepare a custom {form.city} earnings projection and reach out to{" "}
+          We&apos;ll prepare a custom {sel.city} earnings projection and reach out to{" "}
           <span className="font-semibold text-white">{form.email}</span> within one business day.
         </p>
         <button
@@ -70,11 +77,25 @@ export function HostLeadForm() {
 
   return (
     <form onSubmit={submit} className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 sm:p-8">
+      {/* Live estimate carried from the calculator */}
+      <div className="mb-6 flex items-center justify-between gap-4 rounded-2xl border border-brand-400/20 bg-brand-500/10 px-4 py-3">
+        <div className="flex items-center gap-2.5">
+          <TrendingUp className="h-5 w-5 shrink-0 text-brand-300" />
+          <p className="text-sm text-zinc-300">
+            Your estimate · <span className="font-semibold text-white">{sel.city}</span> ·{" "}
+            {SPACE_TYPES[sel.spaceType].label}
+          </p>
+        </div>
+        <p className="shrink-0 font-display text-lg font-extrabold text-white">
+          {formatCAD(est.ownerNetMonthly)}<span className="text-xs font-medium text-zinc-400">/mo</span>
+        </p>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <Input label="Full name" value={form.name} onChange={(v) => set("name", v)} placeholder="Jordan Lee" />
         <Input label="Email" type="email" value={form.email} onChange={(v) => set("email", v)} placeholder="you@email.com" />
         <Input label="Phone (optional)" value={form.phone} onChange={(v) => set("phone", v)} placeholder="(416) 555-0142" />
-        <Select label="City" value={form.city} onChange={(v) => set("city", v)} options={HOST_CITIES} />
+        <Select label="City" value={sel.city} onChange={(v) => update({ city: v })} options={HOST_CITIES} />
         <div className="sm:col-span-2">
           <Label>What would you list?</Label>
           <div className="grid gap-1.5 sm:grid-cols-3">
@@ -82,10 +103,10 @@ export function HostLeadForm() {
               <button
                 key={s}
                 type="button"
-                onClick={() => set("spaceType", s)}
+                onClick={() => update({ spaceType: s })}
                 className={cn(
                   "rounded-xl border px-3 py-2.5 text-sm font-medium transition",
-                  form.spaceType === s
+                  sel.spaceType === s
                     ? "border-brand-400 bg-brand-500/15 text-white"
                     : "border-white/10 bg-night-850 text-zinc-400 hover:text-white",
                 )}

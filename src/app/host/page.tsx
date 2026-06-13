@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { EarningsEstimator } from "@/components/host/EarningsEstimator";
 import { HostLeadForm } from "@/components/host/HostLeadForm";
+import { HostFunnel } from "@/components/host/HostFunnel";
 import { HOST_PLANS } from "@/lib/str";
 
 export const metadata: Metadata = {
@@ -84,6 +85,7 @@ export default function HostPage() {
         </div>
       </section>
 
+      <HostFunnel>
       {/* Estimator */}
       <section id="estimate" className="mh-container py-12">
         <div className="mx-auto mb-8 max-w-2xl text-center">
@@ -225,6 +227,7 @@ export default function HostPage() {
           <HostLeadForm />
         </div>
       </section>
+      </HostFunnel>
 
       {/* FAQ */}
       <section className="mh-container py-16">

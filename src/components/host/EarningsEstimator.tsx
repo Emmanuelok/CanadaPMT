@@ -1,8 +1,9 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { TrendingUp, ArrowRight } from "lucide-react";
 import { estimateStr, HOST_CITIES, HOST_PLANS, SPACE_TYPES, type HostPlan, type SpaceType } from "@/lib/str";
+import { useHostFunnel } from "@/components/host/HostFunnel";
 import { formatCAD } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
@@ -10,13 +11,11 @@ const SPACE_ORDER: SpaceType[] = ["entire", "suite", "room"];
 const PLAN_ORDER: HostPlan[] = ["full", "cohost"];
 
 export function EarningsEstimator() {
-  const [city, setCity] = useState("Toronto");
-  const [spaceType, setSpaceType] = useState<SpaceType>("entire");
-  const [beds, setBeds] = useState(2);
-  const [plan, setPlan] = useState<HostPlan>("full");
+  const { sel, update } = useHostFunnel();
+  const { city, spaceType, plan } = sel;
 
   const maxBeds = SPACE_TYPES[spaceType].maxBeds;
-  const safeBeds = Math.min(beds, maxBeds);
+  const safeBeds = Math.min(sel.bedrooms, maxBeds);
   const r = useMemo(() => estimateStr(city, spaceType, safeBeds, plan), [city, spaceType, safeBeds, plan]);
 
   return (
@@ -29,7 +28,7 @@ export function EarningsEstimator() {
           <Field label="City">
             <select
               value={city}
-              onChange={(e) => setCity(e.target.value)}
+              onChange={(e) => update({ city: e.target.value })}
               className="w-full rounded-xl border border-white/10 bg-night-850 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-400"
             >
               {HOST_CITIES.map((c) => (
@@ -45,7 +44,7 @@ export function EarningsEstimator() {
               {SPACE_ORDER.map((s) => (
                 <button
                   key={s}
-                  onClick={() => setSpaceType(s)}
+                  onClick={() => update({ spaceType: s })}
                   className={cn(
                     "rounded-xl border px-3 py-2.5 text-left text-sm font-medium transition",
                     spaceType === s
@@ -63,7 +62,7 @@ export function EarningsEstimator() {
             <Field label="Bedrooms">
               <select
                 value={safeBeds}
-                onChange={(e) => setBeds(Number(e.target.value))}
+                onChange={(e) => update({ bedrooms: Number(e.target.value) })}
                 className="w-full rounded-xl border border-white/10 bg-night-850 px-3 py-2.5 text-sm text-white outline-none focus:border-brand-400"
               >
                 {Array.from({ length: maxBeds + 1 }, (_, i) => i).map((b) => (
@@ -80,7 +79,7 @@ export function EarningsEstimator() {
               {PLAN_ORDER.map((p) => (
                 <button
                   key={p}
-                  onClick={() => setPlan(p)}
+                  onClick={() => update({ plan: p })}
                   className={cn(
                     "rounded-xl border px-3 py-2.5 text-sm font-semibold transition",
                     plan === p
