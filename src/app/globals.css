@@ -134,3 +134,72 @@
 .leaflet-popup-tip {
   box-shadow: none;
 }
+
+/* ── Dark mode — a contained override layer that re-skins the shared
+   surface / text / border utilities so the whole app flips without per-file
+   edits. Brand, badges and gradients keep their colour. ───────────────────── */
+.dark {
+  color-scheme: dark;
+}
+.dark body {
+  background-color: #0f1318;
+  color: #e7eaef;
+}
+.dark .bg-white,
+.dark .bg-white\/95,
+.dark .bg-white\/90,
+.dark .bg-white\/85 {
+  background-color: #191e26 !important;
+}
+.dark .bg-cream-100,
+.dark .bg-cream-100\/95,
+.dark .bg-cream-100\/90,
+.dark .bg-cream-50 {
+  background-color: #0f1318 !important;
+}
+.dark .bg-ink-50,
+.dark .bg-ink-50\/60,
+.dark .bg-ink-50\/50,
+.dark .bg-ink-50\/40 {
+  background-color: #161b22 !important;
+}
+.dark .bg-ink-100 {
+  background-color: #232a34 !important;
+}
+.dark .text-ink-900 {
+  color: #eef1f5 !important;
+}
+.dark .text-ink-800 {
+  color: #e0e4ea !important;
+}
+.dark .text-ink-700 {
+  color: #c9cfd8 !important;
+}
+.dark .text-ink-600 {
+  color: #abb2be !important;
+}
+.dark .text-ink-500 {
+  color: #8c94a1 !important;
+}
+.dark .text-ink-400 {
+  color: #717986 !important;
+}
+.dark .border-ink-100 {
+  border-color: #272e38 !important;
+}
+.dark .border-ink-200 {
+  border-color: #333b47 !important;
+}
+.dark .border-cream-300,
+.dark .border-cream-300\/70 {
+  border-color: #272e38 !important;
+}
+.dark .shadow-soft,
+.dark .shadow-lift {
+  box-shadow: 0 10px 34px -14px rgba(0, 0, 0, 0.65) !important;
+}
+/* keep the "white on a dark hero" CTAs as solid maroon buttons in dark */
+.dark .mh-btn-primary.bg-white {
+  background-color: #7e2239 !important;
+  color: #ffffff !important;
+}

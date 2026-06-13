@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X, Sparkles, Leaf, Search, Bell, ChevronDown, Heart } from "lucide-react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { cn } from "@/lib/cn";
 
 const PRIMARY = [
@@ -112,6 +113,7 @@ export function Header() {
               3
             </span>
           </button>
+          <ThemeToggle />
           <Link href="/pricing" className="mh-btn-ghost px-3 py-2">
             Sign in
           </Link>
