@@ -6,12 +6,22 @@ import type { AgentDef, AgentRun } from "@/lib/agents/types";
 import { RunView } from "./RunView";
 import { AgentIcon } from "./icons";
 
-export function AgentRunner({ agent, onBack }: { agent: AgentDef; onBack?: () => void }) {
+export function AgentRunner({
+  agent,
+  onBack,
+  initialInputs,
+  autoRun,
+}: {
+  agent: AgentDef;
+  onBack?: () => void;
+  initialInputs?: Record<string, string>;
+  autoRun?: boolean;
+}) {
   const initial = useMemo(() => {
     const o: Record<string, string> = {};
-    agent.inputs.forEach((i) => (o[i.key] = i.default ?? i.options?.[0]?.value ?? ""));
+    agent.inputs.forEach((i) => (o[i.key] = initialInputs?.[i.key] ?? i.default ?? i.options?.[0]?.value ?? ""));
     return o;
-  }, [agent]);
+  }, [agent, initialInputs]);
 
   const [inputs, setInputs] = useState<Record<string, string>>(initial);
   const [run, setRun] = useState<AgentRun | null>(null);
@@ -22,6 +32,14 @@ export function AgentRunner({ agent, onBack }: { agent: AgentDef; onBack?: () =>
     setRun(null);
     setRevealed(0);
   }, [initial]);
+
+  useEffect(() => {
+    if (autoRun) {
+      setRun(agent.run(initial));
+      setRevealed(0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [agent, initial, autoRun]);
 
   useEffect(() => {
     if (!run || revealed >= run.steps.length) return;

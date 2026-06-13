@@ -12,6 +12,9 @@ import {
   ChevronLeft,
   Sparkles,
   CalendarClock,
+  Zap,
+  Gavel,
+  ShieldCheck,
 } from "lucide-react";
 import { properties, curatedProperties, propertyBySlug } from "@/lib/data/properties";
 import type { Property } from "@/types";
@@ -209,6 +212,29 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
             <AriaButton className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-brand-800 transition hover:bg-brand-50">
               <Sparkles className="h-4 w-4" /> Chat with Aria
             </AriaButton>
+          </div>
+
+          <div className="mh-card p-6">
+            <p className="flex items-center gap-2 font-display text-lg font-bold text-ink-900">
+              <Zap className="h-5 w-5 text-brand-600" /> Run Autopilot on this listing
+            </p>
+            <p className="mt-1 text-sm text-ink-500">Let an AI agent do the analysis for you.</p>
+            <div className="mt-4 space-y-2">
+              {property.listingType === "sale" && (
+                <Link
+                  href={`/autopilot?agent=offer-strategist&property=${property.slug}`}
+                  className="flex items-center gap-2 rounded-xl border border-ink-200 px-4 py-2.5 text-sm font-semibold text-ink-800 transition hover:border-brand-400 hover:text-brand-700"
+                >
+                  <Gavel className="h-4 w-4 text-brand-600" /> Strategize my offer
+                </Link>
+              )}
+              <Link
+                href={`/autopilot?agent=scam-shield&property=${property.slug}`}
+                className="flex items-center gap-2 rounded-xl border border-ink-200 px-4 py-2.5 text-sm font-semibold text-ink-800 transition hover:border-brand-400 hover:text-brand-700"
+              >
+                <ShieldCheck className="h-4 w-4 text-brand-600" /> Verify with ScamShield
+              </Link>
+            </div>
           </div>
         </aside>
       </div>

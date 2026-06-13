@@ -14,6 +14,28 @@ const CATEGORIES = ["Buying", "Renting & newcomers", "Hosting"];
 export function AutopilotConsole() {
   const [tab, setTab] = useState<"flow" | "agents">("flow");
   const [selected, setSelected] = useState<string | null>(null);
+  const [deepLink, setDeepLink] = useState<{ agentId: string; inputs: Record<string, string> } | null>(null);
+  const [flowGoal, setFlowGoal] = useState<string | undefined>(undefined);
+
+  // Deep-link support: /autopilot?agent=offer-strategist&property=<slug> or ?goal=...
+  useEffect(() => {
+    const sp = new URLSearchParams(window.location.search);
+    const agent = sp.get("agent");
+    const goal = sp.get("goal");
+    if (agent && agentById(agent)) {
+      const inputs: Record<string, string> = {};
+      agentById(agent)!.inputs.forEach((i) => {
+        const v = sp.get(i.key);
+        if (v !== null) inputs[i.key] = v;
+      });
+      setDeepLink({ agentId: agent, inputs });
+      setSelected(agent);
+      setTab("agents");
+    } else if (goal) {
+      setFlowGoal(goal);
+      setTab("flow");
+    }
+  }, []);
 
   return (
     <div>
@@ -28,18 +50,31 @@ export function AutopilotConsole() {
 
       <div className="mt-6">
         {tab === "flow" ? (
-          <FlowConsole />
+          <FlowConsole initialGoal={flowGoal} />
         ) : selected ? (
-          <AgentRunner agent={agentById(selected)!} onBack={() => setSelected(null)} />
+          <AgentRunner
+            agent={agentById(selected)!}
+            onBack={() => {
+              setSelected(null);
+              setDeepLink(null);
+            }}
+            initialInputs={deepLink?.agentId === selected ? deepLink.inputs : undefined}
+            autoRun={deepLink?.agentId === selected}
+          />
         ) : (
-          <AgentGrid onPick={setSelected} />
+          <AgentGrid
+            onPick={(id) => {
+              setSelected(id);
+              setDeepLink(null);
+            }}
+          />
         )}
       </div>
     </div>
   );
 }
 
-function FlowConsole() {
+function FlowConsole({ initialGoal }: { initialGoal?: string }) {
   const [goal, setGoal] = useState("");
   const [flow, setFlow] = useState<FlowResult | null>(null);
   const [phase, setPhase] = useState<"idle" | "planning" | "running">("idle");
@@ -56,6 +91,11 @@ function FlowConsole() {
     const t = setTimeout(() => setRevealed((n) => n + 1), 700);
     return () => clearTimeout(t);
   }, [phase, revealed, flow]);
+
+  useEffect(() => {
+    if (initialGoal) go(initialGoal);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function go(text: string) {
     const g = text.trim();
