@@ -9,6 +9,7 @@ const AMORT = 25;
 
 export function MortgageSnapshot({ property }: { property: Property }) {
   if (property.listingType === "rent" || property.listingType === "sold") return null;
+  if (property.category && property.category !== "residential") return null;
 
   const down = Math.round(property.price * 0.2);
   const principal = property.price - down;

@@ -20,7 +20,11 @@ export type PropertyType =
   | "Condo Apartment"
   | "Bungalow"
   | "Loft"
-  | "Duplex";
+  | "Duplex"
+  | "Land"
+  | "Commercial";
+
+export type PropertyCategory = "residential" | "land" | "commercial";
 
 export type ScamRisk = "low" | "medium" | "high";
 
@@ -52,6 +56,8 @@ export interface Property {
   slug: string;
   listingType: ListingType;
   propertyType: PropertyType;
+  /** Defaults to "residential" when omitted. */
+  category?: PropertyCategory;
   title: string;
   address: {
     street: string;

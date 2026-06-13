@@ -47,6 +47,30 @@ The pain points above were grounded in current reporting on the Canadian market:
 
 ---
 
+## 🧭 Listings experience
+
+Modelled on the best of Zillow / Akwaaba / Airbnb, adapted for Canada:
+
+- **Real interactive map** (Leaflet + Carto basemap) with price pins, popups, a
+  **price Heatmap** toggle, and **Search-this-area** bounds filtering
+- **Split / Grid / Map** views, "ranked-for-you" relevance, and **lifestyle
+  filter chips** (Find me a deal, Luxury, Family-friendly, Investor-grade,
+  First-time buyer, Newcomer-ready, Waterfront, Designer-led, New build)
+- **Dense, colour-coded signal badges** per card — AI Match %, above/below
+  market, Hot home, May drop, Reduced %, Featured, Ownership-unverified
+- **Airbnb-style image carousels** on every card, **Save** ❤ and **Compare**
+  (side-by-side modal across price, TrueValue, match, area, neighbourhood)
+- **Categories**: Homes · **Land** · **Commercial** (each with its own
+  illustrated scene, stats and valuation handling)
+- **Dark mode** (system-aware, persisted) and a warm wine/cream design system
+
+### Photography
+
+Listing imagery uses real photos from Unsplash layered over a deterministic SVG
+scene, with an `onError` fallback so **a card can never show a broken image**.
+To use your own source (Unsplash API, Cloudinary, an MLS feed), edit the
+`POOLS` / `photoUrl` in `src/components/Photo.tsx` — no call sites change.
+
 ## 🛠 Tech stack
 
 - **Next.js 14** (App Router) + **React 18** + **TypeScript**

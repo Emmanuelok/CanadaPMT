@@ -44,6 +44,23 @@ const RENT_YIELD: Record<string, number> = {
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
 export function valueProperty(property: Property): Valuation {
+  // Land & commercial (and any zero-area listing) don't fit the residential
+  // AVM — return a simple band around the asking price instead of NaN.
+  if ((property.category && property.category !== "residential") || property.sqft <= 0) {
+    const estimate = Math.round(property.price / 1000) * 1000;
+    return {
+      estimate,
+      low: Math.round((estimate * 0.9) / 1000) * 1000,
+      high: Math.round((estimate * 1.1) / 1000) * 1000,
+      confidence: 68,
+      rentEstimate: 0,
+      drivers: [{ label: "Based on recent area transactions", impact: 0 }],
+      comparableIds: [],
+      pricePerSqft: property.sqft > 0 ? Math.round(estimate / property.sqft) : 0,
+      askingDelta: 0,
+    };
+  }
+
   const cityPPSF = PPSF[property.address.city] ?? { house: 500, condo: 650 };
   const basePPSF = isHouse(property.propertyType) ? cityPPSF.house : cityPPSF.condo;
 

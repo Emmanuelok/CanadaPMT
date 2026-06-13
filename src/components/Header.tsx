@@ -10,8 +10,8 @@ import { cn } from "@/lib/cn";
 const PRIMARY = [
   { label: "Buy", href: "/search?type=sale" },
   { label: "Rent", href: "/search?type=rent" },
-  { label: "Pre-construction", href: "/search?type=preconstruction" },
-  { label: "Sold", href: "/search?type=sold" },
+  { label: "Land", href: "/search?type=sale&cat=land" },
+  { label: "Commercial", href: "/search?type=sale&cat=commercial" },
   { label: "Agents", href: "/agents" },
 ];
 

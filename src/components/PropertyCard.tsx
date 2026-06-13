@@ -82,6 +82,11 @@ export function PropertyCard({ property, className }: { property: Property; clas
   const s = propertySignals(property);
   const agent = agentById(property.agentId);
   const initial = agent ? agent.name[0] : "!";
+  const isResidential = !property.category || property.category === "residential";
+  const areaLabel =
+    property.category === "land"
+      ? `${(property.lotSqft ?? property.sqft).toLocaleString("en-CA")} ft² lot`
+      : `${property.sqft.toLocaleString("en-CA")} ft²`;
   const priceLabel =
     property.listingType === "rent"
       ? `${formatCAD(property.price)}/mo`
@@ -172,18 +177,30 @@ export function PropertyCard({ property, className }: { property: Property; clas
         </p>
 
         <div className="mt-3 flex items-center gap-4 border-t border-ink-100 pt-3 text-sm text-ink-600">
-          <span className="flex items-center gap-1.5">
-            <BedDouble className="h-4 w-4 text-ink-400" />
-            {property.beds} bd
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Bath className="h-4 w-4 text-ink-400" />
-            {property.baths} ba
-          </span>
-          <span className="flex items-center gap-1.5">
-            <Maximize className="h-4 w-4 text-ink-400" />
-            {property.sqft.toLocaleString("en-CA")} ft²
-          </span>
+          {isResidential ? (
+            <>
+              <span className="flex items-center gap-1.5">
+                <BedDouble className="h-4 w-4 text-ink-400" />
+                {property.beds} bd
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Bath className="h-4 w-4 text-ink-400" />
+                {property.baths} ba
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Maximize className="h-4 w-4 text-ink-400" />
+                {property.sqft.toLocaleString("en-CA")} ft²
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="font-medium text-ink-700">{property.propertyType}</span>
+              <span className="flex items-center gap-1.5">
+                <Maximize className="h-4 w-4 text-ink-400" />
+                {areaLabel}
+              </span>
+            </>
+          )}
         </div>
       </div>
     </Link>

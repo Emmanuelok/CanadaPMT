@@ -42,6 +42,20 @@ const POOLS: Record<Kind, string[]> = {
     "photo-1540518614846-7eded433c457",
     "photo-1616594039964-ae9021a400a0",
   ],
+  land: [
+    "photo-1500382017468-9049fed747ef",
+    "photo-1466692476868-aef1dfb1e735",
+    "photo-1501696461415-6bd6660c6742",
+    "photo-1444858291040-58f756a3bdd6",
+    "photo-1485470733090-0aae1788d5af",
+  ],
+  commercial: [
+    "photo-1486406146926-c627a92ad1ab",
+    "photo-1497366811353-6870744d04b2",
+    "photo-1441986300917-64674bd600d8",
+    "photo-1582037928769-181f2644ecb7",
+    "photo-1524758631624-e2822e304c36",
+  ],
 };
 
 function hash(s: string): number {

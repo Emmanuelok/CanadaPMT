@@ -8,6 +8,8 @@ import { sceneFor, type Kind } from "@/components/PropertyScene";
 import { cn } from "@/lib/cn";
 
 function baseKind(p: Property): Kind {
+  if (p.category === "land") return "land";
+  if (p.category === "commercial") return "commercial";
   return p.propertyType === "Condo Apartment" || p.propertyType === "Loft" ? "living" : "exterior";
 }
 

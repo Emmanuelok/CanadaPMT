@@ -4,7 +4,7 @@ import { cn } from "@/lib/cn";
 // imagery, never breaks, and needs no external CDN. A real photo CDN can be
 // swapped in behind this same component later.
 
-export type Kind = "exterior" | "living" | "kitchen" | "bedroom";
+export type Kind = "exterior" | "living" | "kitchen" | "bedroom" | "land" | "commercial";
 
 function hash(s: string): number {
   let h = 2166136261;
@@ -17,6 +17,8 @@ function hash(s: string): number {
 
 export function sceneFor(label: string | undefined, index: number): Kind {
   const l = (label ?? "").toLowerCase();
+  if (/aerial|frontage|parcel|acre|\bland\b|\blot\b|plot|survey/.test(l)) return "land";
+  if (/storefront|retail|signage|\bunit\b|\bbay\b|commercial|warehouse|tenant/.test(l)) return "commercial";
   if (/kitchen/.test(l)) return "kitchen";
   if (/bedroom|suite|sleeping/.test(l)) return "bedroom";
   if (/living|dining|lounge|loft|open|view|amenit|lobby|rooftop/.test(l)) return "living";
@@ -60,6 +62,8 @@ export function PropertyScene({
         {resolved === "living" && <Interior uid={uid} wall={wall} floor={floor} accent={sofa} variant="living" />}
         {resolved === "kitchen" && <Kitchen uid={uid} wall={wall} floor={floor} />}
         {resolved === "bedroom" && <Interior uid={uid} wall={wall} floor={floor} accent={sofa} variant="bedroom" />}
+        {resolved === "land" && <Land uid={uid} sky={sky} />}
+        {resolved === "commercial" && <Commercial uid={uid} sky={sky} />}
       </svg>
       {label && (
         <span className="absolute bottom-2 left-2 rounded-md bg-black/35 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur">
@@ -236,6 +240,90 @@ function Kitchen({ uid, wall, floor }: { uid: string; wall: string; floor: strin
       {/* window */}
       <rect x="300" y="60" width="76" height="92" fill="#dcebf2" stroke="#cbbfa9" strokeWidth="4" />
       <line x1="338" y1="60" x2="338" y2="152" stroke="#cbbfa9" strokeWidth="3" />
+    </g>
+  );
+}
+
+function Land({ uid, sky }: { uid: string; sky: { from: string; to: string; sun: string } }) {
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`${uid}-sky`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={sky.from} />
+          <stop offset="100%" stopColor={sky.to} />
+        </linearGradient>
+        <linearGradient id={`${uid}-field`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="#a9cb91" />
+          <stop offset="100%" stopColor="#7ba861" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="280" fill={`url(#${uid}-sky)`} />
+      <circle cx="318" cy="54" r="24" fill={sky.sun} opacity="0.85" />
+      <path d="M0 150 Q70 138 140 150 T280 146 T400 152 V190 H0 Z" fill="#cbdcbd" opacity="0.7" />
+      <rect x="0" y="150" width="400" height="130" fill={`url(#${uid}-field)`} />
+      <path d="M0 196 Q200 188 400 198" stroke="#ffffff" strokeWidth="2" opacity="0.18" fill="none" />
+      <path d="M0 224 Q200 216 400 226" stroke="#ffffff" strokeWidth="2" opacity="0.14" fill="none" />
+      {/* dirt access path */}
+      <polygon points="172,280 232,280 214,176 186,176" fill="#cabfa2" />
+      {/* trees */}
+      <rect x="52" y="138" width="6" height="20" fill="#7a5a3c" />
+      <circle cx="55" cy="134" r="14" fill="#6fa05f" />
+      <rect x="350" y="140" width="6" height="18" fill="#7a5a3c" />
+      <circle cx="353" cy="136" r="12" fill="#79ab68" />
+      {/* FOR SALE sign */}
+      <rect x="250" y="146" width="6" height="58" fill="#6f5439" />
+      <rect x="226" y="120" width="74" height="38" fill="#ffffff" stroke="#d8cfbf" strokeWidth="2" />
+      <rect x="226" y="120" width="74" height="13" fill="#7e2239" />
+      <rect x="234" y="139" width="58" height="5" fill="#c9cfd8" />
+      <rect x="234" y="148" width="40" height="5" fill="#c9cfd8" />
+      {/* survey stake */}
+      <line x1="120" y1="204" x2="120" y2="178" stroke="#5b6472" strokeWidth="2" />
+      <path d="M120 178 L134 182 L120 187 Z" fill="#ee5140" />
+    </g>
+  );
+}
+
+function Commercial({ uid, sky }: { uid: string; sky: { from: string; to: string; sun: string } }) {
+  return (
+    <g>
+      <defs>
+        <linearGradient id={`${uid}-glass`} x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#d3e6ef" />
+          <stop offset="100%" stopColor="#9bbccb" />
+        </linearGradient>
+      </defs>
+      <rect width="400" height="280" fill="#e9e7e1" />
+      <rect width="400" height="60" fill={sky.to} opacity="0.6" />
+      {/* facade */}
+      <rect x="36" y="38" width="328" height="174" fill="#d7d0c4" />
+      <rect x="36" y="38" width="328" height="8" fill="#c5bdaf" />
+      {/* upper office windows */}
+      {[0, 1, 2, 3, 4].map((i) => (
+        <rect key={i} x={56 + i * 60} y={62} width={40} height={56} fill={`url(#${uid}-glass)`} stroke="#b7afa0" strokeWidth="2" />
+      ))}
+      {/* signage band */}
+      <rect x="36" y="150" width="328" height="22" fill="#7e2239" />
+      <rect x="52" y="153" width="16" height="16" rx="3" fill="#ffffff" />
+      <rect x="78" y="157" width="96" height="8" rx="2" fill="#ffffff" opacity="0.85" />
+      {/* awning */}
+      <polygon points="40,150 360,150 344,140 56,140" fill="#9d3349" />
+      {/* storefront */}
+      <rect x="52" y="176" width="118" height="36" fill={`url(#${uid}-glass)`} stroke="#3a4250" strokeWidth="2" />
+      <rect x="230" y="176" width="118" height="36" fill={`url(#${uid}-glass)`} stroke="#3a4250" strokeWidth="2" />
+      <line x1="111" y1="176" x2="111" y2="212" stroke="#3a4250" strokeWidth="1.5" />
+      <line x1="289" y1="176" x2="289" y2="212" stroke="#3a4250" strokeWidth="1.5" />
+      {/* entrance */}
+      <rect x="176" y="176" width="48" height="36" fill="#7f9aa6" stroke="#3a4250" strokeWidth="2" />
+      <line x1="200" y1="176" x2="200" y2="212" stroke="#3a4250" strokeWidth="2" />
+      {/* sidewalk */}
+      <rect x="0" y="212" width="400" height="68" fill="#cdc8bd" />
+      <line x1="0" y1="212" x2="400" y2="212" stroke="#b7b2a6" strokeWidth="2" />
+      {/* streetlight */}
+      <rect x="70" y="150" width="4" height="62" fill="#5b6472" />
+      <rect x="60" y="146" width="24" height="8" rx="3" fill="#3a4250" />
+      {/* planter */}
+      <rect x="320" y="222" width="24" height="16" fill="#8a6a48" />
+      <circle cx="332" cy="214" r="12" fill="#6fa05f" />
     </g>
   );
 }

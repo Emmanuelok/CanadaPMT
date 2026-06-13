@@ -21,6 +21,11 @@ export function ValuationPanel({ property }: { property: Property }) {
     .filter((p): p is Property => Boolean(p))
     .slice(0, 3);
 
+  const metrics: { label: string; value: string }[] = [];
+  if (v.pricePerSqft > 0) metrics.push({ label: "Price / sq ft", value: `$${v.pricePerSqft.toLocaleString("en-CA")}` });
+  if (v.rentEstimate > 0) metrics.push({ label: "Est. monthly rent", value: formatCAD(v.rentEstimate) });
+  if (v.comparableIds.length > 0) metrics.push({ label: "Comparables used", value: `${v.comparableIds.length}` });
+
   return (
     <section className="mh-card p-6">
       <div className="flex items-center justify-between">
@@ -38,7 +43,7 @@ export function ValuationPanel({ property }: { property: Property }) {
           <p className="text-sm text-ink-500">Estimated {isRent ? "value" : "market value"}</p>
           <p className="font-display text-4xl font-extrabold text-ink-900">{formatCAD(v.estimate)}</p>
         </div>
-        {!isRent && (
+        {!isRent && Math.abs(v.askingDelta) >= 1 && (
           <div
             className={cn(
               "flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold",
@@ -79,11 +84,13 @@ export function ValuationPanel({ property }: { property: Property }) {
         )}
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        <Metric label="Price / sq ft" value={`$${v.pricePerSqft.toLocaleString("en-CA")}`} />
-        <Metric label="Est. monthly rent" value={`${formatCAD(v.rentEstimate)}`} />
-        <Metric label="Comparables used" value={`${v.comparableIds.length}`} />
-      </div>
+      {metrics.length > 0 && (
+        <div className={cn("mt-6 grid grid-cols-2 gap-3", metrics.length >= 3 && "sm:grid-cols-3")}>
+          {metrics.map((m) => (
+            <Metric key={m.label} label={m.label} value={m.value} />
+          ))}
+        </div>
+      )}
 
       {/* Drivers */}
       <div className="mt-6">

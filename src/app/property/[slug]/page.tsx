@@ -52,7 +52,15 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
   const property = propertyBySlug(params.slug);
   if (!property) notFound();
 
-  const heroKind = property.propertyType === "Condo Apartment" || property.propertyType === "Loft" ? "living" : "exterior";
+  const isResidential = !property.category || property.category === "residential";
+  const heroKind =
+    property.category === "land"
+      ? "land"
+      : property.category === "commercial"
+        ? "commercial"
+        : property.propertyType === "Condo Apartment" || property.propertyType === "Loft"
+          ? "living"
+          : "exterior";
   const listing = LISTING_LABEL[property.listingType];
   const thumbs = property.images.slice(1, 5);
   const similar = properties
@@ -66,14 +74,28 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
         ? `Sold for ${formatCAD(property.price)}`
         : formatCAD(property.price);
 
-  const facts: { icon: typeof BedDouble; label: string; value: string }[] = [
-    { icon: BedDouble, label: "Beds", value: `${property.beds}` },
-    { icon: Bath, label: "Baths", value: `${property.baths}` },
-    { icon: Maximize, label: "Interior", value: `${property.sqft.toLocaleString("en-CA")} ft²` },
-    { icon: Car, label: "Parking", value: `${property.parking}` },
-    { icon: CalendarDays, label: property.listingType === "preconstruction" ? "Completion" : "Built", value: `${property.yearBuilt}` },
-    { icon: Home, label: "Type", value: property.propertyType },
-  ];
+  const facts: { icon: typeof BedDouble; label: string; value: string }[] = isResidential
+    ? [
+        { icon: BedDouble, label: "Beds", value: `${property.beds}` },
+        { icon: Bath, label: "Baths", value: `${property.baths}` },
+        { icon: Maximize, label: "Interior", value: `${property.sqft.toLocaleString("en-CA")} ft²` },
+        { icon: Car, label: "Parking", value: `${property.parking}` },
+        { icon: CalendarDays, label: property.listingType === "preconstruction" ? "Completion" : "Built", value: `${property.yearBuilt}` },
+        { icon: Home, label: "Type", value: property.propertyType },
+      ]
+    : property.category === "land"
+      ? [
+          { icon: Home, label: "Type", value: "Land" },
+          { icon: Maximize, label: "Lot size", value: `${(property.lotSqft ?? 0).toLocaleString("en-CA")} ft²` },
+          { icon: CalendarDays, label: "Property tax", value: property.propertyTaxAnnual ? `${formatCAD(property.propertyTaxAnnual)}/yr` : "—" },
+        ]
+      : [
+          { icon: Home, label: "Type", value: "Commercial" },
+          { icon: Maximize, label: "Floor area", value: `${property.sqft.toLocaleString("en-CA")} ft²` },
+          { icon: Car, label: "Parking", value: `${property.parking}` },
+          { icon: Bath, label: "Washrooms", value: `${property.baths}` },
+          { icon: CalendarDays, label: "Built", value: `${property.yearBuilt}` },
+        ];
 
   return (
     <div className="mh-container py-6">

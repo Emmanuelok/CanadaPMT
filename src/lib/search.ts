@@ -3,6 +3,7 @@ import { properties } from "@/lib/data/properties";
 
 export interface PropertyFilters {
   listingType: ListingType;
+  category: string; // "" = residential (default); "land" | "commercial"
   city: string; // "" = all
   propertyType: string; // "" = all
   minBeds: number;
@@ -15,6 +16,7 @@ export interface PropertyFilters {
 
 export const defaultFilters = (listingType: ListingType = "sale"): PropertyFilters => ({
   listingType,
+  category: "",
   city: "",
   propertyType: "",
   minBeds: 0,
@@ -27,6 +29,9 @@ export const defaultFilters = (listingType: ListingType = "sale"): PropertyFilte
 
 export function applyFilters(filters: PropertyFilters): Property[] {
   let result = properties.filter((p) => p.listingType === filters.listingType);
+
+  const cat = filters.category || "residential";
+  result = result.filter((p) => (p.category ?? "residential") === cat);
 
   if (filters.city) result = result.filter((p) => p.address.city === filters.city);
   if (filters.propertyType) result = result.filter((p) => p.propertyType === (filters.propertyType as PropertyType));

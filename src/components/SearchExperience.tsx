@@ -41,6 +41,7 @@ type View = "split" | "grid" | "map";
 function initialFromParams(params: URLSearchParams): PropertyFilters {
   const type = (params.get("type") as ListingType) || "sale";
   const f = defaultFilters(["sale", "rent", "preconstruction", "sold"].includes(type) ? type : "sale");
+  f.category = params.get("cat") ?? "";
   f.query = params.get("q") ?? "";
   f.city = params.get("city") ?? "";
   f.maxPrice = Number(params.get("max")) || 0;
@@ -79,6 +80,7 @@ export function SearchExperience() {
     setFilters(next);
     const sp = new URLSearchParams();
     sp.set("type", next.listingType);
+    if (next.category) sp.set("cat", next.category);
     if (next.query) sp.set("q", next.query);
     if (next.city) sp.set("city", next.city);
     if (next.maxPrice) sp.set("max", String(next.maxPrice));
@@ -102,7 +104,16 @@ export function SearchExperience() {
     (filters.transparentOnly ? 1 : 0) +
     chips.length;
 
-  const noun = filters.listingType === "sold" ? "sold home" : filters.listingType === "rent" ? "rental" : "home";
+  const noun =
+    filters.category === "land"
+      ? "land listing"
+      : filters.category === "commercial"
+        ? "commercial space"
+        : filters.listingType === "sold"
+          ? "sold home"
+          : filters.listingType === "rent"
+            ? "rental"
+            : "home";
 
   return (
     <div>
@@ -121,6 +132,25 @@ export function SearchExperience() {
                   )}
                 >
                   {t.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="hidden rounded-full bg-white p-1 shadow-sm sm:flex">
+              {[
+                { k: "", label: "Homes" },
+                { k: "land", label: "Land" },
+                { k: "commercial", label: "Commercial" },
+              ].map((c) => (
+                <button
+                  key={c.k}
+                  onClick={() => update({ category: c.k })}
+                  className={cn(
+                    "whitespace-nowrap rounded-full px-3 py-1.5 text-sm font-semibold transition",
+                    filters.category === c.k ? "bg-ink-900 text-white shadow-sm" : "text-ink-600 hover:text-ink-900",
+                  )}
+                >
+                  {c.label}
                 </button>
               ))}
             </div>
@@ -224,7 +254,6 @@ export function SearchExperience() {
           <h1 className="font-display text-xl font-extrabold text-ink-900">
             {results.length} {noun}
             {results.length === 1 ? "" : "s"}
-            {filters.listingType === "sold" ? "" : " for " + (filters.listingType === "rent" ? "rent" : "sale")}
             {filters.city ? ` in ${filters.city}` : " across Canada"}
             <span className="ml-2 text-sm font-medium text-ink-400">· ranked for you</span>
           </h1>
