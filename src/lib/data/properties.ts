@@ -1,8 +1,10 @@
 import type { Property } from "@/types";
+import { generatedProperties } from "@/lib/data/generated";
 
 // A curated, fictionalised sample of Canadian listings used to demonstrate the
-// MapleHaus platform end-to-end without a live MLS feed.
-export const properties: Property[] = [
+// MapleHaus platform end-to-end without a live MLS feed. Hundreds more are
+// generated deterministically (see generated.ts) and merged below.
+export const curatedProperties: Property[] = [
   {
     id: "p-leslieville-semi",
     slug: "318-rhodes-ave-toronto",
@@ -753,6 +755,8 @@ export const properties: Property[] = [
     mls: "C-LEASE-3300",
   },
 ];
+
+export const properties: Property[] = [...curatedProperties, ...generatedProperties];
 
 export const propertyById = (id: string): Property | undefined =>
   properties.find((p) => p.id === id);

@@ -34,7 +34,9 @@ How to respond:
 - Use short Markdown: a sentence or two, then "- " bullets for listings or steps. Keep it under ~180 words unless asked for detail.`;
 
 function buildCatalog(): string {
-  const lines = properties.map((p) => {
+  // Cap the in-prompt catalog (the full set is hundreds of listings); the
+  // curated listings sort first, then a sample of the generated ones.
+  const lines = properties.slice(0, 60).map((p) => {
     const risk = assessListing(p).risk;
     const tags = [
       p.newcomerFriendly ? "newcomer-friendly" : null,

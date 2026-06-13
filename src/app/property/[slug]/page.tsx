@@ -13,7 +13,7 @@ import {
   Sparkles,
   CalendarClock,
 } from "lucide-react";
-import { properties, propertyBySlug } from "@/lib/data/properties";
+import { properties, curatedProperties, propertyBySlug } from "@/lib/data/properties";
 import type { Property } from "@/types";
 import { Photo } from "@/components/Photo";
 import { PropertyCard } from "@/components/PropertyCard";
@@ -28,8 +28,10 @@ import { Pill } from "@/components/ui";
 import { formatCAD } from "@/lib/format";
 import { PROVINCE_NAMES } from "@/lib/format";
 
+// Pre-render the curated listings; the hundreds of generated ones render on
+// demand (dynamicParams defaults to true) so builds stay fast.
 export function generateStaticParams() {
-  return properties.map((p) => ({ slug: p.slug }));
+  return curatedProperties.map((p) => ({ slug: p.slug }));
 }
 
 export function generateMetadata({ params }: { params: { slug: string } }): Metadata {

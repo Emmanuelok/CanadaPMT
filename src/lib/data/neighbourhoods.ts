@@ -1,7 +1,8 @@
 import type { Neighbourhood } from "@/types";
+import { generatedNeighbourhoods } from "@/lib/data/generated";
 
 // Median prices reflect a (fictionalised but plausible) mid-2026 Canadian market.
-export const neighbourhoods: Neighbourhood[] = [
+export const curatedNeighbourhoods: Neighbourhood[] = [
   {
     id: "nb-leslieville",
     name: "Leslieville",
@@ -183,6 +184,8 @@ export const neighbourhoods: Neighbourhood[] = [
     highlights: ["Most affordable in the data set", "Walk to downtown & The Forks", "Vibrant nightlife strip"],
   },
 ];
+
+export const neighbourhoods: Neighbourhood[] = [...curatedNeighbourhoods, ...generatedNeighbourhoods];
 
 export const neighbourhoodById = (id: string): Neighbourhood | undefined =>
   neighbourhoods.find((n) => n.id === id);

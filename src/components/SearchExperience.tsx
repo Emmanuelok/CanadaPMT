@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Search,
   SlidersHorizontal,
@@ -61,6 +61,8 @@ export function SearchExperience() {
   const [savedSearch, setSavedSearch] = useState(false);
   const [heatmap, setHeatmap] = useState(false);
   const [areaBounds, setAreaBounds] = useState<[number, number, number, number] | null>(null);
+  const [visible, setVisible] = useState(24);
+  useEffect(() => setVisible(24), [filters, chips, areaBounds]);
 
   const results = useMemo(() => {
     let r = applyFilters(filters);
@@ -114,6 +116,9 @@ export function SearchExperience() {
           : filters.listingType === "rent"
             ? "rental"
             : "home";
+
+  const shown = results.slice(0, visible);
+  const mapProps = results.slice(0, 200);
 
   return (
     <div>
@@ -315,29 +320,45 @@ export function SearchExperience() {
             <p className="mt-1 text-sm text-ink-500">Try widening your budget, beds, city or lifestyle filters.</p>
           </div>
         ) : view === "grid" ? (
-          <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {results.map((p) => (
-              <PropertyCard key={p.id} property={p} />
-            ))}
-          </div>
+          <>
+            <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {shown.map((p) => (
+                <PropertyCard key={p.id} property={p} />
+              ))}
+            </div>
+            {results.length > visible && (
+              <div className="mt-8 flex justify-center">
+                <button onClick={() => setVisible((v) => v + 24)} className="mh-btn-ghost">
+                  Show more · {results.length - visible} more
+                </button>
+              </div>
+            )}
+          </>
         ) : view === "map" ? (
           <div className="mt-5 h-[calc(100vh-15rem)] overflow-hidden rounded-2xl border border-ink-100">
-            <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
+            <LeafletMap properties={mapProps} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
           </div>
         ) : (
           // split
           <div className="mt-5 grid gap-5 lg:grid-cols-[1.25fr_1fr]">
             <div className="order-2 hidden overflow-hidden rounded-2xl border border-ink-100 lg:order-1 lg:block lg:sticky lg:top-44 lg:h-[calc(100vh-12rem)]">
-              <LeafletMap properties={results} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
+              <LeafletMap properties={mapProps} activeId={activeId} onHover={setActiveId} heatmap={heatmap} onBoundsSearch={setAreaBounds} />
             </div>
             <div className="order-1 min-w-0 lg:order-2">
               <div className="grid gap-5 sm:grid-cols-2">
-                {results.map((p) => (
+                {shown.map((p) => (
                   <div key={p.id} onMouseEnter={() => setActiveId(p.id)} onMouseLeave={() => setActiveId(null)}>
                     <PropertyCard property={p} />
                   </div>
                 ))}
               </div>
+              {results.length > visible && (
+                <div className="mt-8 flex justify-center">
+                  <button onClick={() => setVisible((v) => v + 24)} className="mh-btn-ghost">
+                    Show more · {results.length - visible} more
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

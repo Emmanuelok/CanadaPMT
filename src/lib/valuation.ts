@@ -1,6 +1,7 @@
 import type { Property, Valuation } from "@/types";
 import { properties } from "@/lib/data/properties";
 import { neighbourhoodById } from "@/lib/data/neighbourhoods";
+import { CITY_DATA } from "@/lib/data/cities";
 
 // ───────────────────────────────────────────────────────────────────────────
 // TrueValue AI — a transparent Automated Valuation Model (AVM)
@@ -14,32 +15,12 @@ import { neighbourhoodById } from "@/lib/data/neighbourhoods";
 const HOUSE_TYPES = new Set(["Detached", "Semi-Detached", "Townhouse", "Bungalow", "Duplex"]);
 const isHouse = (t: string) => HOUSE_TYPES.has(t);
 
-// Blended price-per-living-square-foot baselines (CAD), by city and broad type.
-const PPSF: Record<string, { house: number; condo: number }> = {
-  Toronto: { house: 720, condo: 1300 },
-  Mississauga: { house: 600, condo: 900 },
-  Ottawa: { house: 520, condo: 600 },
-  Vancouver: { house: 990, condo: 1150 },
-  Burnaby: { house: 760, condo: 950 },
-  Calgary: { house: 400, condo: 470 },
-  Montreal: { house: 440, condo: 720 },
-  Halifax: { house: 380, condo: 450 },
-  Winnipeg: { house: 320, condo: 400 },
-};
-
-// Approximate gross annual rent yields by city (rent ÷ value), used to derive
-// a rent estimate from the capital value.
-const RENT_YIELD: Record<string, number> = {
-  Toronto: 0.034,
-  Mississauga: 0.038,
-  Ottawa: 0.045,
-  Vancouver: 0.032,
-  Burnaby: 0.04,
-  Calgary: 0.052,
-  Montreal: 0.046,
-  Halifax: 0.05,
-  Winnipeg: 0.06,
-};
+// Blended price-per-living-square-foot baselines (CAD) and gross rent yields,
+// derived from the canonical city model so generated prices and estimates agree.
+const PPSF: Record<string, { house: number; condo: number }> = Object.fromEntries(
+  CITY_DATA.map((c) => [c.name, { house: c.ppsfHouse, condo: c.ppsfCondo }]),
+);
+const RENT_YIELD: Record<string, number> = Object.fromEntries(CITY_DATA.map((c) => [c.name, c.rentYield]));
 
 const clamp = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
 
