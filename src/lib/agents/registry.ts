@@ -9,6 +9,8 @@ const cityOptions = (withAny = true) => [
   ...CITY_DATA.map((c) => ({ value: c.name, label: c.name })),
 ];
 
+const saleSlugs = properties.filter((p) => p.listingType === "sale").slice(0, 8).map((p) => p.slug);
+
 const propertyOptions = () => {
   const sale = properties.filter((p) => p.listingType === "sale").slice(0, 8);
   const rent = properties.filter((p) => p.listingType === "rent").slice(0, 6);
@@ -63,6 +65,22 @@ export const AGENTS: AgentDef[] = [
     automates: "auto-screens every listing you view and flags fraud risk",
     inputs: [{ key: "property", label: "Listing", type: "select", options: propertyOptions() }],
     run: R.scamShieldAgent,
+  },
+  {
+    id: "comparison",
+    name: "Listing Comparison",
+    tagline: "Compares listings and picks a winner",
+    description: "Lines up two or three homes on price, AI value, $/sqft, demand and trust, then scores a clear overall winner.",
+    icon: "GitCompare",
+    audience: "consumer",
+    category: "Buying",
+    automates: "side-by-side compares your shortlist and ranks them",
+    inputs: [
+      { key: "propertyA", label: "Listing A", type: "select", options: propertyOptions(), default: saleSlugs[0] },
+      { key: "propertyB", label: "Listing B", type: "select", options: propertyOptions(), default: saleSlugs[1] },
+      { key: "propertyC", label: "Listing C (optional)", type: "select", options: [{ value: "", label: "— none —" }, ...propertyOptions()], default: "" },
+    ],
+    run: R.comparison,
   },
   {
     id: "affordability",
@@ -161,6 +179,21 @@ export const AGENTS: AgentDef[] = [
     automates: "closes the books and pays you out every month",
     inputs: [],
     run: () => R.payoutReport(),
+  },
+  {
+    id: "portfolio-growth",
+    name: "Portfolio Growth",
+    tagline: "Where to buy your next rental",
+    description: "Models short-term-rental yields across every market and recommends where your next investment earns the most.",
+    icon: "TrendingUp",
+    audience: "host",
+    category: "Hosting",
+    automates: "scouts the highest-yield markets for your next purchase",
+    inputs: [
+      { key: "budget", label: "Investment budget", type: "number", placeholder: "600000", default: "600000", suffix: "$" },
+      { key: "city", label: "City of interest", type: "select", options: cityOptions(false), default: "Toronto" },
+    ],
+    run: R.portfolioGrowth,
   },
   {
     id: "compliance",

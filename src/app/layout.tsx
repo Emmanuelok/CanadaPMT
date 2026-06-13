@@ -4,6 +4,7 @@ import "./globals.css";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { AriaCopilot } from "@/components/AriaCopilot";
+import { CommandBar } from "@/components/autopilot/CommandBar";
 import { CompareProvider } from "@/components/compare/CompareContext";
 import { CompareBar } from "@/components/compare/CompareBar";
 import { SavedProvider } from "@/components/saved/SavedContext";
@@ -54,6 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <main>{children}</main>
             <Footer />
             <AriaCopilot />
+            <CommandBar />
             <CompareBar />
           </CompareProvider>
           </SavedSearchesProvider>

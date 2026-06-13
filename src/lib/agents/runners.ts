@@ -11,7 +11,7 @@ import { estimateStr, SPACE_TYPES } from "@/lib/str";
 import { portfolio, aggregate, unitById, PRICE_SEASON, type HostUnit } from "@/lib/host/portfolio";
 import { getStayDetails } from "@/lib/host/stay";
 import { CITY_DATA } from "@/lib/data/cities";
-import type { Province } from "@/types";
+import type { Property, Province } from "@/types";
 
 const TODAY = new Date("2026-06-13");
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -517,6 +517,111 @@ export function complianceAgent(input: Record<string, string>): AgentRun {
     ],
     table: { head: ["Requirement", "Status"], rows },
     actions: [{ label: "Talk to MapleHaus Host", href: "/host#start" }],
+  };
+}
+
+export function comparison(input: Record<string, string>): AgentRun {
+  const slugs = [input.propertyA, input.propertyB, input.propertyC].filter(Boolean);
+  const found = slugs.map((s) => propertyBySlug(s)).filter((p): p is Property => !!p);
+  const uniq = found.filter((p, i) => found.findIndex((x) => x.slug === p.slug) === i);
+  if (uniq.length < 2) return err("comparison", "Listing Comparison", "Pick at least two different listings to compare.");
+
+  const data = uniq.map((p) => {
+    const v = valueProperty(p);
+    const a = assessListing(p);
+    const s = propertySignals(p);
+    const score = -v.askingDelta + (a.score - 50) * 0.4 + (s.matchScore - 50) * 0.4 - p.daysOnMarket * 0.15;
+    return { p, v, a, s, score };
+  });
+  const letter = (i: number) => String.fromCharCode(65 + i);
+  const short = (t: string) => (t.length > 16 ? t.slice(0, 16) + "…" : t);
+  const idxBy = (fn: (d: (typeof data)[number]) => number, max = true) =>
+    data.reduce((bi, d, i, arr) => (max ? fn(d) > fn(arr[bi]) : fn(d) < fn(arr[bi])) ? i : bi, 0);
+
+  const winner = idxBy((d) => d.score);
+  const bestValue = idxBy((d) => d.v.askingDelta, false);
+  const bestTrust = idxBy((d) => d.a.score);
+
+  const rows: RunRow[] = [
+    { cells: ["Price", ...data.map((d) => formatCAD(d.p.price))] },
+    { cells: ["AI value", ...data.map((d) => formatCAD(d.v.estimate))] },
+    { cells: ["vs AI value", ...data.map((d) => `${d.v.askingDelta > 0 ? "+" : ""}${d.v.askingDelta}%`)] },
+    { cells: ["$ / sqft", ...data.map((d) => formatCAD(d.v.pricePerSqft))] },
+    { cells: ["Beds / baths", ...data.map((d) => `${d.p.beds}/${d.p.baths}`)] },
+    { cells: ["Days on market", ...data.map((d) => String(d.p.daysOnMarket))] },
+    { cells: ["Trust score", ...data.map((d) => `${d.a.score}/100`)] },
+    { cells: ["Match score", ...data.map((d) => `${d.s.matchScore}`)] },
+  ];
+
+  const w = data[winner];
+  return {
+    agentId: "comparison",
+    title: "Listing Comparison",
+    steps: [
+      { label: `Pulled TrueValue & trust on ${data.length} listings` },
+      { label: "Normalised price, value, $/sqft & demand" },
+      { label: "Scored each on a blended index" },
+      { label: "Picked the strongest overall" },
+    ],
+    summary: `**${letter(winner)} · ${short(w.p.title)}** wins overall — ${w.v.askingDelta < 0 ? `${Math.abs(w.v.askingDelta)}% below AI value` : "priced near value"}, trust ${w.a.score}/100, match ${w.s.matchScore}. **${letter(bestValue)}** is the best value and **${letter(bestTrust)}** the most trusted.`,
+    metrics: [
+      { label: "Best overall", value: letter(winner), tone: "good" },
+      { label: "Best value", value: letter(bestValue), tone: "good" },
+      { label: "Most trusted", value: letter(bestTrust), tone: "good" },
+      { label: "Compared", value: String(data.length) },
+    ],
+    listings: data.map((d, i) => ({
+      slug: d.p.slug,
+      title: `${letter(i)} · ${d.p.title}`,
+      city: `${d.p.address.city}, ${d.p.address.province}`,
+      price: formatCAD(d.p.price),
+      note: i === winner ? "best overall" : undefined,
+      tone: i === winner ? "good" : "neutral",
+    })),
+    table: { head: ["", ...data.map((_, i) => letter(i))], rows },
+  };
+}
+
+export function portfolioGrowth(input: Record<string, string>): AgentRun {
+  const budget = num(input.budget, 600000);
+  const city = input.city && input.city !== "any" ? input.city : "Toronto";
+
+  const ranked = CITY_DATA.map((c) => {
+    const e = estimateStr(c.name, "entire", 2, "full");
+    const value = Math.round(850 * c.ppsfHouse);
+    return { name: c.name, net: e.ownerNetAnnual, value, yield: e.ownerNetAnnual / value };
+  }).sort((a, b) => b.yield - a.yield);
+
+  const top = ranked.slice(0, 6);
+  const mine = ranked.find((r) => r.name === city) ?? ranked[0];
+  const payback = mine.net > 0 ? mine.value / mine.net : 0;
+  const affordable = budget >= mine.value;
+
+  const rows: RunRow[] = top.map((r) => ({
+    cells: [r.name, formatCAD(r.net), formatCAD(r.value), `${(r.yield * 100).toFixed(1)}%`],
+    tone: r.name === top[0].name ? "good" : "neutral",
+  }));
+
+  return {
+    agentId: "portfolio-growth",
+    title: `Portfolio Growth · ${city}`,
+    steps: [
+      { label: `Modelled STR economics across ${CITY_DATA.length} markets` },
+      { label: "Ranked markets by net yield" },
+      { label: "Matched the best fit to your budget" },
+    ],
+    summary: `Across ${CITY_DATA.length} markets, **${top[0].name}** has the strongest short-term-rental yield (**${(top[0].yield * 100).toFixed(1)}%**). In **${city}**, a typical 2-bed nets ~**${formatCAD(mine.net)}/yr** on a ~${formatCAD(mine.value)} property${affordable ? " — within your budget" : " (above your budget; consider a suite or a higher-yield market)"}.`,
+    metrics: [
+      { label: "Projected net / yr", value: formatCAD(mine.net), tone: "good" },
+      { label: "Gross STR yield", value: `${(mine.yield * 100).toFixed(1)}%`, tone: "good" },
+      { label: "Payback", value: `${payback.toFixed(0)} yrs` },
+      { label: "Top market", value: top[0].name, tone: "good" },
+    ],
+    table: { head: ["Market", "Net / yr", "Est. value", "Yield"], rows },
+    actions: [
+      { label: "Estimate a specific unit", href: "/host#estimate" },
+      { label: "Owner dashboard", href: "/host/dashboard" },
+    ],
   };
 }
 
