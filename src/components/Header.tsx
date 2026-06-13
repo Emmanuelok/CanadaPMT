@@ -19,6 +19,8 @@ const PRIMARY = [
 const TOOLS = [
   { label: "TrueValue valuation", href: "/valuation" },
   { label: "AffordIQ calculator", href: "/affordability" },
+  { label: "Host earnings estimator", href: "/host#estimate" },
+  { label: "Owner dashboard", href: "/host/dashboard" },
   { label: "Newcomer Pathway", href: "/newcomers" },
   { label: "Pricing & plans", href: "/pricing" },
   { label: "Why MapleHaus", href: "/about" },

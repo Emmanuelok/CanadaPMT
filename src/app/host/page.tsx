@@ -137,6 +137,53 @@ export default function HostPage() {
         </div>
       </section>
 
+      {/* Dashboard preview */}
+      <section className="mh-container py-12">
+        <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03] p-8 sm:p-10">
+          <div className="grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]">
+            <div>
+              <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">
+                <BarChart3 className="h-3.5 w-3.5 text-brand-400" /> Owner dashboard
+              </span>
+              <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                Full transparency, in real time
+              </h2>
+              <p className="mt-3 max-w-xl text-zinc-400">
+                Every owner gets a live dashboard: monthly payouts, occupancy trends, upcoming bookings, and every
+                cleaning and maintenance task we handle on your behalf. No black box.
+              </p>
+              <ul className="mt-5 grid gap-2 sm:grid-cols-2">
+                {["Monthly payout statements", "Occupancy & revenue trends", "Upcoming bookings calendar", "Cleaning & maintenance log"].map((f) => (
+                  <li key={f} className="flex items-center gap-2 text-sm text-zinc-300">
+                    <Check className="h-4 w-4 shrink-0 text-brand-400" /> {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/host/dashboard" className="mh-btn-primary mt-6">
+                View a sample dashboard <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-night-900/60 p-5">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-zinc-400">Next payout · Jul 1</p>
+                <Wallet className="h-4 w-4 text-brand-300" />
+              </div>
+              <p className="mt-1 font-display text-3xl font-extrabold text-white">$6,480</p>
+              <div className="mt-4 flex items-end gap-1.5">
+                {[38, 44, 52, 61, 72, 88, 96, 92, 78, 66, 58, 84].map((h, i) => (
+                  <span
+                    key={i}
+                    className={i === 11 ? "flex-1 rounded-sm bg-brand-400" : "flex-1 rounded-sm bg-white/15"}
+                    style={{ height: `${h}px` }}
+                  />
+                ))}
+              </div>
+              <p className="mt-3 text-xs text-zinc-500">Net payouts · last 12 months</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Pricing */}
       <section className="mh-container py-16">
         <div className="mx-auto max-w-2xl text-center">
