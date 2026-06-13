@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import type { ChatMessage, Property } from "@/types";
 import { properties } from "@/lib/data/properties";
 import { assessListing } from "@/lib/scamShield";
+import { estimateStr, HOST_CITIES, type SpaceType } from "@/lib/str";
 import { formatCAD } from "@/lib/format";
 
 // ───────────────────────────────────────────────────────────────────────────
@@ -22,6 +23,7 @@ Your job is to help buyers, renters and newcomers navigate the Canadian housing 
 - Rental scams and unverified landlords that prey on newcomers → point to ScamShield trust scores on listings.
 - A confusing mortgage stress test, CMHC insurance and land-transfer taxes → use AffordIQ (the /affordability tool).
 - Newcomers with thin credit files and no Canadian history → the Newcomer Pathway (/newcomers).
+- Owners who want income from a home, suite or spare room → MapleHaus Host, a fully-managed short-term-rental service (free earnings estimator at /host, live owner dashboard at /host/dashboard).
 
 How to respond:
 - Be concise, warm and specific. Use Canadian dollars and Canadian context (provinces, GO/SkyTrain/REM, CMHC, B-20 stress test, FHSA, RRSP Home Buyers' Plan).
@@ -29,6 +31,7 @@ How to respond:
 - When a buyer asks about affordability, qualifying or the stress test, explain briefly and point to /affordability.
 - When asked what a home is worth, explain that TrueValue gives a free, explainable estimate with comparables, and reference the listing's estimate.
 - When a renter (especially a newcomer) is worried about scams, explain ScamShield and the red flags (paying a deposit before viewing, rent far below market, no land-registry match).
+- When someone asks about renting out, hosting, Airbnb/Vrbo, sublets or earning income from their property, explain MapleHaus Host runs it end-to-end (listing, pricing, guests, cleaning, maintenance) and point to /host (earnings estimator) and /host/dashboard.
 - Reply in French if the user writes in French.
 - Respond directly with your final answer. Do not include exploratory reasoning or restate the question.
 - Use short Markdown: a sentence or two, then "- " bullets for listings or steps. Keep it under ~180 words unless asked for detail.`;
@@ -120,6 +123,7 @@ function heuristicAnswer(messages: ChatMessage[]): string {
       "- **TrueValue** — a free, explainable home value with comparables → [/valuation](/valuation)",
       "- **AffordIQ** — what you can actually afford after the stress test → [/affordability](/affordability)",
       "- **ScamShield** — spot rental scams before you pay a deposit",
+      "- **Earn by hosting** — turn a home, suite or spare room into managed short-term-rental income → [/host](/host)",
       "What are you looking for?",
     ].join("\n");
   }
@@ -170,6 +174,30 @@ function heuristicAnswer(messages: ChatMessage[]): string {
       "It's the data Canadian buyers usually can't get for free anywhere else.",
       "- Try it at [/valuation](/valuation), or open any listing to see its estimate vs. the asking price.",
       "Which property or area would you like a value on?",
+    ].join("\n");
+  }
+
+  if (
+    /\b(host|hosting|airbnb|vrbo|short[- ]?term|\bstr\b|sublet|spare room|private room|in[- ]?law|granny flat|garden suite|co[- ]?host|vacation rental|put it to work)\b/.test(text) ||
+    /\bbasement\s+(?:apartment|suite|unit)\b/.test(text) ||
+    /\brent\w*\s+(?:it\s+|my\s+)?out\b/.test(text) ||
+    /\brent\w*\s+my\s+(?:home|house|condo|place|property|suite|room)\b/.test(text) ||
+    /\b(?:earn|make money|extra income|passive income)\b[^.]*\b(?:home|house|condo|place|property|suite|room|host|airbnb|rent|space)\b/.test(text)
+  ) {
+    const hostCity = HOST_CITIES.find((c) => text.includes(c.toLowerCase())) || "Toronto";
+    const space: SpaceType = /\b(spare room|private room|a room)\b/.test(text)
+      ? "room"
+      : /\b(basement|suite|in[- ]?law|garden suite)\b/.test(text)
+        ? "suite"
+        : "entire";
+    const bm = text.match(/(\d+)\s*[-]?\s*(?:\+)?\s*(?:bed|bd|br|bedroom)/);
+    const est = estimateStr(hostCity, space, bm ? parseInt(bm[1], 10) : 2, "full");
+    const what = space === "room" ? "a private room" : space === "suite" ? "a suite" : "your place";
+    return [
+      `Renting out ${what} in **${hostCity}** could bring in roughly **${formatCAD(est.ownerNetMonthly)}/mo** take-home — after our management fee, at ~${est.occupancyPct}% occupancy (${formatCAD(est.adr)}/night).`,
+      "**MapleHaus Host** runs the whole thing end-to-end: listing, dynamic pricing, guest screening, cleaning, restocking and maintenance. You just collect payouts.",
+      "- Estimate your exact space → [/host#estimate](/host#estimate)",
+      "- See a live owner dashboard → [/host/dashboard](/host/dashboard)",
     ].join("\n");
   }
 
