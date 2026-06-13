@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Sparkles, Zap, Check, Loader2, ArrowRight, Bot } from "lucide-react";
+import { Sparkles, Zap, Check, Loader2, ArrowRight, Bot, Infinity as InfinityIcon, Power } from "lucide-react";
 import { AGENTS, agentById } from "@/lib/agents/registry";
 import { runFlow, FLOW_EXAMPLES, type FlowResult } from "@/lib/agents/orchestrator";
+import { useAutomations, disableAutomation } from "@/lib/agents/automations";
 import { RunView } from "./RunView";
 import { AgentRunner } from "./AgentRunner";
 import { AgentIcon } from "./icons";
@@ -12,8 +13,9 @@ import { cn } from "@/lib/cn";
 const CATEGORIES = ["Buying", "Renting & newcomers", "Hosting"];
 
 export function AutopilotConsole() {
-  const [tab, setTab] = useState<"flow" | "agents">("flow");
+  const [tab, setTab] = useState<"flow" | "agents" | "automations">("flow");
   const [selected, setSelected] = useState<string | null>(null);
+  const automations = useAutomations();
   const [deepLink, setDeepLink] = useState<{ agentId: string; inputs: Record<string, string> } | null>(null);
   const [flowGoal, setFlowGoal] = useState<string | undefined>(undefined);
 
@@ -46,10 +48,18 @@ export function AutopilotConsole() {
         <TabBtn active={tab === "agents"} onClick={() => setTab("agents")}>
           <Bot className="h-4 w-4" /> All agents
         </TabBtn>
+        <TabBtn active={tab === "automations"} onClick={() => setTab("automations")}>
+          <InfinityIcon className="h-4 w-4" /> My automations
+          {automations.length > 0 && (
+            <span className="ml-1 rounded-full bg-emerald-400/20 px-1.5 text-[11px] font-bold text-emerald-300">{automations.length}</span>
+          )}
+        </TabBtn>
       </div>
 
       <div className="mt-6">
-        {tab === "flow" ? (
+        {tab === "automations" ? (
+          <MyAutomations automations={automations} onConfigure={(id) => { setTab("agents"); setSelected(id); }} />
+        ) : tab === "flow" ? (
           <FlowConsole initialGoal={flowGoal} />
         ) : selected ? (
           <AgentRunner
@@ -209,6 +219,75 @@ function AgentGrid({ onPick }: { onPick: (id: string) => void }) {
                 </button>
               ))}
             </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function MyAutomations({
+  automations,
+  onConfigure,
+}: {
+  automations: { agentId: string; inputs: Record<string, string>; enabledAt: number }[];
+  onConfigure: (id: string) => void;
+}) {
+  if (automations.length === 0) {
+    return (
+      <div className="rounded-3xl border border-dashed border-white/10 bg-white/[0.01] p-10 text-center">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-white/5 text-brand-300">
+          <InfinityIcon className="h-6 w-6" />
+        </span>
+        <p className="mt-3 font-display text-lg font-bold text-white">No automations yet</p>
+        <p className="mx-auto mt-1 max-w-md text-sm text-zinc-400">
+          Open any agent and toggle <span className="font-semibold text-white">Automate this</span> to have Autopilot keep
+          running it for you — deal alerts, nightly pricing, turnovers and more.
+        </p>
+        <button onClick={() => onConfigure("")} className="mh-btn-ghost mt-5">
+          Browse agents <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center gap-2 rounded-2xl border border-emerald-400/20 bg-emerald-400/10 px-4 py-3 text-sm text-emerald-100">
+        <InfinityIcon className="h-4 w-4 shrink-0 text-emerald-300" />
+        <span>
+          <span className="font-bold text-white">{automations.length}</span> automation{automations.length > 1 ? "s" : ""} running
+          for you. Autopilot re-checks these continuously and surfaces anything that changes.
+        </span>
+      </div>
+
+      {automations.map((a) => {
+        const def = agentById(a.agentId);
+        if (!def) return null;
+        const run = def.run(a.inputs);
+        return (
+          <div key={a.agentId}>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <span className="flex items-center gap-2 text-sm font-semibold text-white">
+                <AgentIcon name={def.icon} className="h-4 w-4 text-brand-300" />
+                {def.name}
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-400/15 px-2 py-0.5 text-[11px] font-bold text-emerald-300">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Active
+                </span>
+              </span>
+              <div className="flex gap-2">
+                <button onClick={() => onConfigure(a.agentId)} className="rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-zinc-300 hover:text-white">
+                  Configure
+                </button>
+                <button
+                  onClick={() => disableAutomation(a.agentId)}
+                  className="inline-flex items-center gap-1 rounded-full border border-white/10 px-3 py-1 text-xs font-semibold text-zinc-400 hover:text-rose-300"
+                >
+                  <Power className="h-3 w-3" /> Turn off
+                </button>
+              </div>
+            </div>
+            <RunView run={run} />
           </div>
         );
       })}

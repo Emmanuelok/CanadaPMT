@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronLeft, Play, RotateCcw } from "lucide-react";
+import { ChevronLeft, Play, RotateCcw, Infinity as InfinityIcon } from "lucide-react";
 import type { AgentDef, AgentRun } from "@/lib/agents/types";
+import { useAutomations, enableAutomation, disableAutomation } from "@/lib/agents/automations";
 import { RunView } from "./RunView";
 import { AgentIcon } from "./icons";
 
@@ -26,6 +27,8 @@ export function AgentRunner({
   const [inputs, setInputs] = useState<Record<string, string>>(initial);
   const [run, setRun] = useState<AgentRun | null>(null);
   const [revealed, setRevealed] = useState(0);
+  const automations = useAutomations();
+  const automated = automations.some((a) => a.agentId === agent.id);
 
   useEffect(() => {
     setInputs(initial);
@@ -111,6 +114,18 @@ export function AgentRunner({
           <button onClick={start} className="mh-btn-primary mt-6 w-full">
             {run ? <RotateCcw className="h-4 w-4" /> : <Play className="h-4 w-4" />}
             {run ? "Run again" : "Run agent"}
+          </button>
+
+          <button
+            onClick={() => (automated ? disableAutomation(agent.id) : enableAutomation(agent.id, inputs))}
+            className={`mt-2 flex w-full items-center justify-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition ${
+              automated
+                ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                : "border-white/10 text-zinc-400 hover:text-white"
+            }`}
+          >
+            <InfinityIcon className="h-4 w-4" />
+            {automated ? "Automation on — running for you" : "Automate this (set & forget)"}
           </button>
         </div>
 
