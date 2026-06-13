@@ -1,18 +1,51 @@
 "use client";
 
 import Link from "next/link";
-import { Heart, Search, Trash2 } from "lucide-react";
+import { Heart, Search, Trash2, ArrowRight, X } from "lucide-react";
 import { useSaved } from "@/components/saved/SavedContext";
+import { useSavedSearches } from "@/components/saved/SavedSearchesContext";
 import { propertyById } from "@/lib/data/properties";
 import { PropertyCard } from "@/components/PropertyCard";
 
 export function SavedHomes() {
   const { ids, hydrated, clear } = useSaved();
+  const { searches, remove: removeSearch } = useSavedSearches();
   const homes = ids.map((id) => propertyById(id)).filter((p): p is NonNullable<typeof p> => Boolean(p));
   const n = homes.length;
 
   return (
     <div className="mh-container py-10">
+      {searches.length > 0 && (
+        <section className="mb-10">
+          <h2 className="font-display text-xl font-bold text-white">Saved searches</h2>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {searches.map((s) => (
+              <div
+                key={s.id}
+                className="flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3"
+              >
+                <p className="min-w-0 truncate text-sm font-semibold text-white">{s.label}</p>
+                <div className="flex shrink-0 items-center gap-1.5">
+                  <Link
+                    href={`/search?${s.query}`}
+                    className="inline-flex items-center gap-1 rounded-full bg-brand-600 px-3 py-1.5 text-xs font-semibold text-white transition hover:bg-brand-500"
+                  >
+                    Run <ArrowRight className="h-3.5 w-3.5" />
+                  </Link>
+                  <button
+                    onClick={() => removeSearch(s.id)}
+                    aria-label="Remove saved search"
+                    className="flex h-8 w-8 items-center justify-center rounded-full text-zinc-400 transition hover:bg-white/5 hover:text-white"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">Saved homes</h1>

@@ -19,6 +19,8 @@ import type { ListingType, Property } from "@/types";
 import { applyFilters, defaultFilters, PROPERTY_TYPES, type PropertyFilters } from "@/lib/search";
 import { cities } from "@/lib/data/properties";
 import { LIFESTYLE_CHIPS, matchesLifestyle, propertySignals } from "@/lib/signals";
+import { searchLabel, searchQueryString } from "@/lib/savedSearch";
+import { useSavedSearches } from "@/components/saved/SavedSearchesContext";
 import { PropertyCard } from "@/components/PropertyCard";
 import { cn } from "@/lib/cn";
 
@@ -58,7 +60,7 @@ export function SearchExperience() {
   const [chips, setChips] = useState<string[]>(params.get("deal") === "1" ? ["Find me a deal"] : []);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [view, setView] = useState<View>("split");
-  const [savedSearch, setSavedSearch] = useState(false);
+  const savedSearches = useSavedSearches();
   const [heatmap, setHeatmap] = useState(false);
   const [areaBounds, setAreaBounds] = useState<[number, number, number, number] | null>(null);
   const [visible, setVisible] = useState(24);
@@ -119,6 +121,8 @@ export function SearchExperience() {
 
   const shown = results.slice(0, visible);
   const mapProps = results.slice(0, 200);
+  const currentQuery = searchQueryString(filters, chips);
+  const isSearchSaved = savedSearches.hydrated && savedSearches.has(currentQuery);
 
   return (
     <div>
@@ -283,11 +287,11 @@ export function SearchExperience() {
               </button>
             )}
             <button
-              onClick={() => setSavedSearch((v) => !v)}
+              onClick={() => savedSearches.toggle(searchLabel(filters, chips), currentQuery)}
               className="hidden items-center gap-1.5 rounded-full border border-ink-200 bg-white px-3 py-1.5 text-xs font-semibold text-ink-700 transition hover:border-brand-300 sm:inline-flex"
             >
-              {savedSearch ? <BookmarkCheck className="h-4 w-4 text-brand-600" /> : <Bookmark className="h-4 w-4" />}
-              {savedSearch ? "Search saved" : "Save this search"}
+              {isSearchSaved ? <BookmarkCheck className="h-4 w-4 text-brand-600" /> : <Bookmark className="h-4 w-4" />}
+              {isSearchSaved ? "Search saved" : "Save this search"}
             </button>
             <div className="flex rounded-full bg-white p-1 shadow-sm">
               {(

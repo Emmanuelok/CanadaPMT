@@ -7,6 +7,7 @@ import { AriaCopilot } from "@/components/AriaCopilot";
 import { CompareProvider } from "@/components/compare/CompareContext";
 import { CompareBar } from "@/components/compare/CompareBar";
 import { SavedProvider } from "@/components/saved/SavedContext";
+import { SavedSearchesProvider } from "@/components/saved/SavedSearchesContext";
 import { AuroraBackground } from "@/components/motion/AuroraBackground";
 
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
@@ -47,6 +48,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen">
         <AuroraBackground />
         <SavedProvider>
+          <SavedSearchesProvider>
           <CompareProvider>
             <Header />
             <main>{children}</main>
@@ -54,6 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <AriaCopilot />
             <CompareBar />
           </CompareProvider>
+          </SavedSearchesProvider>
         </SavedProvider>
       </body>
     </html>
