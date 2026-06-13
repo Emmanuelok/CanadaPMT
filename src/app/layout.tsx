@@ -8,8 +8,13 @@ import { AriaCopilot } from "@/components/AriaCopilot";
 const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
 const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
 
+// On Vercel, resolve canonical/OG URLs to the real deployment domain.
+const siteUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+  : "https://maplehaus.example";
+
 export const metadata: Metadata = {
-  metadataBase: new URL("https://maplehaus.example"),
+  metadataBase: new URL(siteUrl),
   title: {
     default: "MapleHaus — Canada's Intelligent Real Estate Platform",
     template: "%s · MapleHaus",

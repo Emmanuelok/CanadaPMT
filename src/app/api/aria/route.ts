@@ -4,6 +4,8 @@ import type { ChatMessage } from "@/types";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
+// Give the Claude call headroom beyond the platform's short default timeout.
+export const maxDuration = 30;
 
 export async function POST(request: Request) {
   try {
