@@ -63,11 +63,11 @@ export function LeafletMap({
         zoom={4}
         scrollWheelZoom
         className="h-full w-full"
-        style={{ background: "#e7efe9" }}
+        style={{ background: "#0b0b11" }}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>'
-          url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+          url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         />
         <FitBounds points={points} />
         {properties.map((p) => {

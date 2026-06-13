@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { PropertyScene, sceneFor, type Kind } from "@/components/PropertyScene";
+import { Home, Building2, Trees } from "lucide-react";
+import { sceneFor, type Kind } from "@/components/PropertyScene";
 import { cn } from "@/lib/cn";
 
-// Real listing photography layered over the deterministic SVG scene. If the
-// remote image fails (offline, blocked, dead id), the scene shows through —
-// so a card can never render a broken image. Swap PROVIDER/POOLS for your own
-// CDN (e.g. Unsplash API, Cloudinary) without touching call sites.
+// Real listing photography over a premium dark placeholder. If the remote image
+// fails (offline, blocked, dead id) the placeholder shows — a card can never
+// render broken. Swap POOLS / photoUrl for your own CDN without touching call
+// sites.
 
 const POOLS: Record<Kind, string[]> = {
   exterior: [
@@ -69,8 +70,7 @@ function hash(s: string): number {
 
 function photoUrl(scene: Kind, seedKey: string): string {
   const pool = POOLS[scene];
-  const id = pool[hash(seedKey) % pool.length];
-  return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=900&q=70`;
+  return `https://images.unsplash.com/${pool[hash(seedKey) % pool.length]}?auto=format&fit=crop&w=900&q=70`;
 }
 
 export function Photo({
@@ -87,10 +87,16 @@ export function Photo({
   const scene: Kind = kind ?? sceneFor(label, 0);
   const [failed, setFailed] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const Icon = scene === "land" ? Trees : scene === "exterior" ? Home : Building2;
 
   return (
-    <div className={cn("relative overflow-hidden bg-ink-100", className)}>
-      <PropertyScene seedKey={seedKey} kind={scene} className="absolute inset-0 h-full w-full" />
+    <div className={cn("relative overflow-hidden bg-night-800", className)}>
+      {/* premium placeholder (shows until the photo loads, or if it fails) */}
+      <div className="absolute inset-0 bg-gradient-to-br from-night-700 via-night-800 to-night-900">
+        <div className="absolute inset-0 mh-grid-bg opacity-30" />
+        <div className="absolute -left-8 -top-10 h-32 w-44 rounded-full bg-brand-600/20 blur-2xl" />
+        <Icon className="absolute left-1/2 top-1/2 h-9 w-9 -translate-x-1/2 -translate-y-1/2 text-white/15" strokeWidth={1.4} />
+      </div>
       {!failed && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -103,7 +109,7 @@ export function Photo({
         />
       )}
       {label && (
-        <span className="absolute bottom-2 left-2 z-10 rounded-md bg-black/40 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur">
+        <span className="absolute bottom-2 left-2 z-10 rounded-md bg-black/45 px-2 py-0.5 text-[11px] font-medium text-white/90 backdrop-blur">
           {label}
         </span>
       )}

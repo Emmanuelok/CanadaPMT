@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Leaf } from "lucide-react";
+import { Sparkles } from "lucide-react";
 
 const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
@@ -35,12 +35,12 @@ export function Footer() {
     <footer className="mt-20 border-t border-ink-100 bg-ink-50/60">
       <div className="mh-container grid gap-10 py-12 md:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <Link href="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-700 text-white">
-              <Leaf className="h-5 w-5" strokeWidth={2.2} />
+          <Link href="/" className="flex items-center gap-2.5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-fuchsia-500 text-white">
+              <Sparkles className="h-5 w-5" strokeWidth={2.2} />
             </span>
-            <span className="font-display text-lg font-extrabold tracking-tight text-ink-900">
-              Maple<span className="text-brand-700">Haus</span>
+            <span className="font-display text-lg font-extrabold tracking-tight text-white">
+              Maple<span className="gradient-text">Haus</span>
             </span>
           </Link>
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-ink-600">

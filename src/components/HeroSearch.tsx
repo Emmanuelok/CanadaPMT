@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 const TABS = [
   { k: "sale", label: "Buy" },
   { k: "rent", label: "Rent" },
-  { k: "preconstruction", label: "Pre-construction" },
+  { k: "preconstruction", label: "Pre-con" },
   { k: "sold", label: "Sold" },
 ] as const;
 
@@ -56,7 +56,7 @@ export function HeroSearch() {
 
   return (
     <div className="w-full">
-      <div className="flex gap-1 rounded-t-2xl">
+      <div className="mb-2 flex flex-wrap gap-1.5">
         {TABS.map((tab) => (
           <button
             key={tab.k}
@@ -65,8 +65,10 @@ export function HeroSearch() {
               setMax("");
             }}
             className={cn(
-              "rounded-t-xl px-4 py-2.5 text-sm font-semibold transition",
-              type === tab.k ? "bg-white text-brand-700 shadow-sm" : "bg-white/15 text-white hover:bg-white/25",
+              "rounded-full px-4 py-1.5 text-sm font-semibold transition",
+              type === tab.k
+                ? "bg-gradient-to-r from-brand-500 to-fuchsia-500 text-white shadow-glow"
+                : "border border-white/10 bg-white/5 text-zinc-300 hover:text-white",
             )}
           >
             {tab.label}
@@ -74,23 +76,20 @@ export function HeroSearch() {
         ))}
       </div>
 
-      <form
-        onSubmit={submit}
-        className="flex flex-col gap-2 rounded-b-2xl rounded-tr-2xl bg-white p-2 shadow-lift sm:flex-row"
-      >
-        <div className="flex flex-1 items-center gap-2 rounded-xl border border-ink-200 px-3 focus-within:border-brand-400">
-          <MapPin className="h-5 w-5 text-ink-400" />
+      <form onSubmit={submit} className="glass flex flex-col gap-2 rounded-2xl p-2 sm:flex-row">
+        <div className="flex flex-1 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 focus-within:border-brand-400">
+          <MapPin className="h-5 w-5 text-zinc-500" />
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="City, neighbourhood, or address"
-            className="w-full bg-transparent py-3 text-sm outline-none placeholder:text-ink-400"
+            className="w-full bg-transparent py-3 text-sm text-white outline-none placeholder:text-zinc-500"
           />
         </div>
         <select
           value={max}
           onChange={(e) => setMax(e.target.value)}
-          className="rounded-xl border border-ink-200 bg-white px-3 py-3 text-sm text-ink-700 outline-none focus:border-brand-400"
+          className="rounded-xl border border-white/10 bg-night-800 px-3 py-3 text-sm text-zinc-200 outline-none focus:border-brand-400"
           aria-label="Maximum price"
         >
           {priceOptions.map((o) => (
@@ -110,7 +109,7 @@ export function HeroSearch() {
           <button
             key={chip.label}
             onClick={() => router.push(chip.href)}
-            className="rounded-full border border-white/30 bg-white/10 px-3 py-1 text-xs font-medium text-white backdrop-blur transition hover:bg-white/20"
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-medium text-zinc-300 transition hover:bg-white/10 hover:text-white"
           >
             {chip.label}
           </button>
