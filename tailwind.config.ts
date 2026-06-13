@@ -50,6 +50,18 @@ const config: Config = {
           900: "#1f2530",
           950: "#141821",
         },
+        cream: {
+          50: "#fdfbf7",
+          100: "#faf6ee",
+          200: "#f3ebdd",
+          300: "#e9ddc9",
+        },
+        wine: {
+          600: "#7c1f3d",
+          700: "#5f152c",
+          800: "#4a1023",
+          900: "#380b1b",
+        },
       },
       fontFamily: {
         sans: ["var(--font-manrope)", "system-ui", "sans-serif"],

@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 import { properties, propertyBySlug } from "@/lib/data/properties";
 import type { Property } from "@/types";
-import { PropertyImage } from "@/components/PropertyImage";
+import { PropertyScene } from "@/components/PropertyScene";
 import { PropertyCard } from "@/components/PropertyCard";
 import { ValuationPanel } from "@/components/ValuationPanel";
 import { TrustPanel } from "@/components/TrustPanel";
@@ -41,12 +41,6 @@ export function generateMetadata({ params }: { params: { slug: string } }): Meta
   };
 }
 
-function imageIcon(p: Property): "home" | "building" | "hammer" {
-  if (p.listingType === "preconstruction") return "hammer";
-  if (p.propertyType === "Condo Apartment" || p.propertyType === "Loft") return "building";
-  return "home";
-}
-
 const LISTING_LABEL: Record<Property["listingType"], { label: string; tone: "brand" | "sky" | "amber" | "neutral" }> = {
   sale: { label: "For sale", tone: "brand" },
   rent: { label: "For rent", tone: "sky" },
@@ -58,7 +52,7 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
   const property = propertyBySlug(params.slug);
   if (!property) notFound();
 
-  const icon = imageIcon(property);
+  const heroKind = property.propertyType === "Condo Apartment" || property.propertyType === "Loft" ? "living" : "exterior";
   const listing = LISTING_LABEL[property.listingType];
   const thumbs = property.images.slice(1, 5);
   const similar = properties
@@ -89,10 +83,9 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
 
       {/* Gallery */}
       <div className="mt-4 overflow-hidden rounded-2xl">
-        <PropertyImage
+        <PropertyScene
           seedKey={`${property.id}-0`}
-          icon={icon}
-          kind={property.listingType === "preconstruction" ? "rendering" : "photo"}
+          kind={heroKind}
           label={property.images[0]?.label}
           className="h-72 w-full sm:h-[420px]"
         />
@@ -100,11 +93,9 @@ export default function PropertyPage({ params }: { params: { slug: string } }) {
       {thumbs.length > 0 && (
         <div className="mt-2 grid grid-cols-4 gap-2">
           {thumbs.map((img, i) => (
-            <PropertyImage
+            <PropertyScene
               key={i}
               seedKey={`${property.id}-${i + 1}`}
-              icon={icon}
-              kind={property.listingType === "preconstruction" ? "rendering" : "photo"}
               label={img.label}
               className="h-20 w-full rounded-xl sm:h-28"
             />

@@ -12,7 +12,7 @@
   }
 
   body {
-    @apply bg-white text-ink-900 font-sans antialiased;
+    @apply bg-cream-100 text-ink-900 font-sans antialiased;
   }
 
   ::selection {
@@ -73,4 +73,64 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+}
+
+/* ── Leaflet map theming (markers live outside React, so plain CSS) ──────── */
+.leaflet-container {
+  font-family: var(--font-manrope), system-ui, sans-serif;
+  background: #e7efe9;
+}
+.leaflet-container .leaflet-control-attribution {
+  font-size: 9px;
+  background: rgba(255, 255, 255, 0.7);
+}
+.leaflet-div-icon {
+  background: transparent;
+  border: 0;
+  width: auto !important;
+  height: auto !important;
+}
+.mh-pin {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid #d4d9e2;
+  background: #ffffff;
+  color: #1f2530;
+  font-weight: 800;
+  font-size: 12px;
+  line-height: 1;
+  box-shadow: 0 2px 8px -2px rgba(20, 24, 33, 0.28);
+  transition: transform 0.12s ease;
+}
+.mh-pin:hover {
+  border-color: #06765c;
+  color: #06765c;
+  z-index: 1000;
+}
+.mh-pin--deal {
+  border-color: #059669;
+  color: #047857;
+}
+.mh-pin--active {
+  background: #06765c;
+  border-color: #06765c;
+  color: #ffffff;
+  transform: scale(1.12);
+  z-index: 1001;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  box-shadow: 0 12px 40px -12px rgba(20, 24, 33, 0.35);
+  padding: 0;
+  overflow: hidden;
+}
+.leaflet-popup-content {
+  margin: 0;
+  width: 220px !important;
+}
+.leaflet-popup-tip {
+  box-shadow: none;
 }
