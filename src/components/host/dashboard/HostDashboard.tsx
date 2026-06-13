@@ -14,6 +14,9 @@ import {
   MapPin,
   Percent,
   ArrowUpRight,
+  LineChart,
+  MessageSquare,
+  Receipt,
 } from "lucide-react";
 import { portfolio, aggregate, type HostUnit } from "@/lib/host/portfolio";
 import { HOST_PLANS, SPACE_TYPES } from "@/lib/str";
@@ -141,6 +144,37 @@ export function HostDashboard() {
               <span>New listing — reviews build after the first stays</span>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* Active automations */}
+      <div className="mt-6 rounded-3xl border border-brand-400/20 bg-brand-500/[0.06] p-6">
+        <div className="flex items-center justify-between">
+          <h2 className="flex items-center gap-2 font-display text-lg font-bold text-white">
+            <Sparkles className="h-4 w-4 text-brand-300" /> Active automations
+          </h2>
+          <Link href="/autopilot" className="text-sm font-semibold text-brand-300 hover:text-brand-200">
+            Manage in Autopilot →
+          </Link>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { name: "Dynamic Pricing", Icon: LineChart, status: "Re-priced your calendar tonight" },
+            { name: "Turnover Agent", Icon: Brush, status: `${cleanings.length} cleanings scheduled` },
+            { name: "Guest Concierge", Icon: MessageSquare, status: `${agg.bookings.length * 2} guest messages handled` },
+            { name: "Payout Agent", Icon: Receipt, status: `Next payout ${agg.nextPayout.date}` },
+          ].map(({ name, Icon, status }) => (
+            <Link key={name} href="/autopilot" className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 transition hover:border-white/20">
+              <div className="flex items-center gap-2">
+                <Icon className="h-4 w-4 text-brand-300" />
+                <span className="text-sm font-semibold text-white">{name}</span>
+              </div>
+              <p className="mt-2 text-xs text-zinc-400">{status}</p>
+              <p className="mt-2 inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-400">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" /> Active
+              </p>
+            </Link>
+          ))}
         </div>
       </div>
 

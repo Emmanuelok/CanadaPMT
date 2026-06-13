@@ -13,10 +13,12 @@ const PRIMARY = [
   { label: "Land", href: "/search?type=sale&cat=land" },
   { label: "Commercial", href: "/search?type=sale&cat=commercial" },
   { label: "Host your place", href: "/host" },
+  { label: "Autopilot", href: "/autopilot" },
   { label: "Agents", href: "/agents" },
 ];
 
 const TOOLS = [
+  { label: "Autopilot — AI agents", href: "/autopilot" },
   { label: "TrueValue valuation", href: "/valuation" },
   { label: "AffordIQ calculator", href: "/affordability" },
   { label: "Host earnings estimator", href: "/host#estimate" },

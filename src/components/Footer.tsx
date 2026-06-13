@@ -14,6 +14,7 @@ const COLUMNS: { title: string; links: { label: string; href: string }[] }[] = [
   {
     title: "AI tools",
     links: [
+      { label: "Autopilot agents", href: "/autopilot" },
       { label: "TrueValue valuation", href: "/valuation" },
       { label: "AffordIQ calculator", href: "/affordability" },
       { label: "Newcomer Pathway", href: "/newcomers" },

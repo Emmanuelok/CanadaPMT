@@ -228,6 +228,48 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* ── Autopilot ────────────────────────────────────────────────────── */}
+      <section className="py-16">
+        <div className="mh-container">
+          <Reveal>
+            <div className="overflow-hidden rounded-3xl border border-brand-400/20 bg-gradient-to-br from-brand-600/20 via-night-900 to-violet-700/20 p-8 sm:p-12">
+              <div className="grid items-center gap-8 lg:grid-cols-[1.2fr_1fr]">
+                <div>
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-zinc-300">
+                    <Zap className="h-3.5 w-3.5 text-brand-400" /> MapleHaus Autopilot
+                  </span>
+                  <h2 className="mt-4 font-display text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                    Tell it a goal. Agents do the rest.
+                  </h2>
+                  <p className="mt-3 max-w-xl text-zinc-400">
+                    A fleet of AI agents automates the whole journey — hunting under-priced homes, strategizing your
+                    offer, verifying listings, qualifying you, and running your rentals end-to-end.
+                  </p>
+                  <div className="mt-6 flex flex-wrap gap-3">
+                    <Link href="/autopilot" className="mh-btn-primary">
+                      <Zap className="h-4 w-4" /> Try Autopilot
+                    </Link>
+                    <Link href="/autopilot" className="mh-btn-ghost">
+                      See all agents <ArrowRight className="h-4 w-4" />
+                    </Link>
+                  </div>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-night-900/60 p-5">
+                  <p className="text-xs text-zinc-500">Goal: “undervalued 2-bed in Toronto under $800k”</p>
+                  <ul className="mt-3 space-y-2.5">
+                    {["Deal Hunter — scanned the market", "Offer Strategist — drafted your offer", "ScamShield — verified the listing"].map((s) => (
+                      <li key={s} className="flex items-center gap-2.5 text-sm text-zinc-200">
+                        <CheckCircle2 className="h-4 w-4 shrink-0 text-emerald-400" /> {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
       {/* ── Featured listings ────────────────────────────────────────────── */}
       <section className="py-16">
         <div className="mh-container">
