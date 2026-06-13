@@ -12,7 +12,7 @@ const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "
 // Seasonality (calendar-month indexed): Canadian STR demand peaks in summer with
 // a December holiday bump; winter shoulders are softer.
 const OCC_SEASON = [0.82, 0.8, 0.85, 0.92, 0.98, 1.08, 1.15, 1.14, 1.02, 0.95, 0.88, 0.96];
-const PRICE_SEASON = [0.92, 0.9, 0.93, 0.98, 1.02, 1.1, 1.18, 1.16, 1.04, 0.98, 0.94, 1.06];
+export const PRICE_SEASON = [0.92, 0.9, 0.93, 0.98, 1.02, 1.1, 1.18, 1.16, 1.04, 0.98, 0.94, 1.06];
 
 const PLATFORMS: { name: string; weight: number }[] = [
   { name: "Airbnb", weight: 0.6 },
@@ -202,6 +202,8 @@ export const portfolio = {
   owner: { name: "Jordan Avery", since: "2024", email: "jordan@example.com" },
   units: SEEDS.map(buildUnit),
 };
+
+export const unitById = (id: string): HostUnit | undefined => portfolio.units.find((u) => u.id === id);
 
 // ── Aggregation over an arbitrary subset of units ────────────────────────────
 export interface Aggregate {

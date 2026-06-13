@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import {
   Wallet,
   CalendarDays,
@@ -12,6 +13,7 @@ import {
   Brush,
   MapPin,
   Percent,
+  ArrowUpRight,
 } from "lucide-react";
 import { portfolio, aggregate, type HostUnit } from "@/lib/host/portfolio";
 import { HOST_PLANS, SPACE_TYPES } from "@/lib/str";
@@ -146,7 +148,7 @@ export function HostDashboard() {
       <h2 className="mt-10 font-display text-xl font-bold text-white">Your properties</h2>
       <div className="mt-4 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {units.map((u) => (
-          <UnitCard key={u.id} unit={u} active={selected === u.id} onClick={() => setSelected(selected === u.id ? "all" : u.id)} />
+          <UnitCard key={u.id} unit={u} active={selected === u.id} />
         ))}
       </div>
 
@@ -290,13 +292,13 @@ function Row({ label, value, muted, strong }: { label: string; value: string; mu
   );
 }
 
-function UnitCard({ unit, active, onClick }: { unit: HostUnit; active: boolean; onClick: () => void }) {
+function UnitCard({ unit, active }: { unit: HostUnit; active: boolean }) {
   const last = unit.months[unit.months.length - 1];
   return (
-    <button
-      onClick={onClick}
+    <Link
+      href={`/host/stay/${unit.id}`}
       className={cn(
-        "group overflow-hidden rounded-3xl border bg-white/[0.03] text-left transition",
+        "group block overflow-hidden rounded-3xl border bg-white/[0.03] text-left transition",
         active ? "border-brand-400 ring-1 ring-brand-400/40" : "border-white/10 hover:border-white/20",
       )}
     >
@@ -345,8 +347,12 @@ function UnitCard({ unit, active, onClick }: { unit: HostUnit; active: boolean; 
             </span>
           )}
         </div>
+
+        <p className="mt-4 flex items-center gap-1 text-xs font-semibold text-brand-400 opacity-0 transition group-hover:opacity-100">
+          View public listing <ArrowUpRight className="h-3 w-3" />
+        </p>
       </div>
-    </button>
+    </Link>
   );
 }
 
